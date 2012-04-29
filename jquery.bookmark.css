@@ -1,0 +1,35 @@
+/* jQuery Bookmark styles */
+.bookmark_list {
+	display: block;
+	list-style-type: none;
+	font-size: 80%;
+	margin: 0px;
+	padding: 0px;
+}
+.bookmark_list li {
+	float: left;
+	width: 23%;
+	margin: 0% 0.5%;
+	padding: 2px;
+	background-color: #ccc;
+	border: 1px outset;
+}
+.bookmark_compact {
+	background-color: #ccc;
+	border: 1px outset;
+}
+.bookmark_compact li {
+	width: 16px;
+	margin: 0%;
+	background-color: transparent;
+	border: none;
+}
+.bookmark_list img {
+	border: none;
+	vertical-align: bottom;
+}
+html:first-child .bookmark_list img { /* Opera */
+	margin-top: 1px;
+	margin-bottom: 2px;
+	vertical-align: middle;
+}
