@@ -1,5 +1,5 @@
 /* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.0.1.
+   Sharing bookmarks for jQuery v1.0.2.
    Written by Keith Wood (kbwood@virginbroadband.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
@@ -65,6 +65,8 @@ function Bookmark() {
 			url: 'http://www.google.com/bookmarks/mark?op=edit&amp;bkmk={u}&amp;title={t}'},
 		'hugg': {display: 'Hugg', icon: 17,
 			url: 'http://www.hugg.com/submit?url={u}'},
+		'kool': {display: 'Koolontheweb', icon: 43,
+			url: 'http://www.koolontheweb.com/post?url={u}&title={t}'},
 		'linkagogo': {display: 'LinkaGoGo', icon: 18,
 			url: 'http://www.linkagogo.com/go/AddNoPopup?url={u}&amp;title={t}'},
 		'livejournal': {display: 'LiveJournal', icon: 19,
@@ -101,6 +103,8 @@ function Bookmark() {
 			url: 'http://smarking.com/editbookmark/?url={u}&amp;title={t}'},
 		'spurl': {display: 'Spurl', icon: 35,
 			url: 'http://www.spurl.net/spurl.php?url={u}&amp;title={t}'},
+		'squidoo': {display: 'Squidoo', icon: 42,
+			url: 'http://www.squidoo.com/lensmaster/bookmark?{u}&title={t}'},
 		'stumbleupon': {display: 'StumbleUpon', icon: 36,
 			url: 'http://www.stumbleupon.com/submit?url={u}&amp;title={t}'},
 		'tailrank': {display: 'Tailrank', icon: 37,
@@ -131,7 +135,8 @@ $.extend(Bookmark.prototype, {
 	/* Add a new bookmarking site to the list.
 	   @param  id  string - the ID of the new site
 	   @param  display  string - the display name for this site
-	   @param  icon     url - the location of an icon for this site (16x16)
+	   @param  icon     url - the location of an icon for this site (16x16), or
+	                    number - the index of the icon within the combined image
 	   @param  url      url - the submission URL for this site,
 	                    with {u} marking where the current page's URL should be inserted,
 	                    and {t} indicating the title insertion point
@@ -144,7 +149,8 @@ $.extend(Bookmark.prototype, {
 	/* Return the list of defined sites.
 	   @return  object[] - indexed by site id (string), each object contains
 	            display (string) - the display name,
-	            icon (string) - the location of the icon,
+	            icon    (string) - the location of the icon,, or
+	                    (number) the icon's index in the combined image
 	            url (string) - the submission URL for the site */
 	getSites: function() {
 		return this._sites;
@@ -153,7 +159,7 @@ $.extend(Bookmark.prototype, {
 	/* Attach the bookmarking widget to a div. */
 	_attachBookmark: function(target, settings) {
 		target = $(target);
-		if (target.is('.' + this.markerClassName)) {
+		if (target.hasClass(this.markerClassName)) {
 			return;
 		}
 		target.addClass(this.markerClassName);
@@ -163,7 +169,7 @@ $.extend(Bookmark.prototype, {
 	/* Reconfigure the settings for a bookmarking div. */
 	_changeBookmark: function(target, settings) {
 		target = $(target);
-		if (!target.is('.' + this.markerClassName)) {
+		if (!target.hasClass(this.markerClassName)) {
 			return;
 		}
 		this._updateBookmark(target, settings);
@@ -187,11 +193,14 @@ $.extend(Bookmark.prototype, {
 					html += '<span title="' + display + '" style="background: ' +
 						'transparent url(' + settings.icons + ') no-repeat -' +
 						(icon * settings.iconSize) + 'px 0px;' +
-						($.browser.mozilla ? ' padding-left: ' + settings.iconSize +
+						($.browser.mozilla && $.browser.version.substr(0, 3) != '1.9' ?
+						' padding-left: ' + settings.iconSize +
 						'px; padding-bottom: 3px;' : '') + '"></span>';
 				}
 				else {
-					html += '<img src="' + icon + '" alt="' + display + '" title="' + display + '"/>';
+					html += '<img src="' + icon + '" alt="' + display + '" title="' +
+						display + '"' + ($.browser.mozilla || $.browser.opera ?
+						' style="vertical-align: baseline;"' : '') + '/>';
 				}
 				html +=	(settings.compact ? '' : '&#xa0;');
 			}
@@ -221,7 +230,7 @@ $.extend(Bookmark.prototype, {
 	/* Remove the bookmarking widget from a div. */
 	_destroyBookmark: function(target) {
 		target = $(target);
-		if (!target.is('.' + this.markerClassName)) {
+		if (!target.hasClass(this.markerClassName)) {
 			return;
 		}
 		target.removeClass(this.markerClassName);
@@ -268,8 +277,6 @@ $.fn.bookmark = function(options) {
 };
 
 /* Initialise the bookmarking functionality. */
-$(function() {
-   $.bookmark = new Bookmark(); // singleton instance
-});
+$.bookmark = new Bookmark(); // singleton instance
 
 })(jQuery);
