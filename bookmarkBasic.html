@@ -1,19 +1,21 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-     "http://www.w3.org/TR/html4/strict.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <title>jQuery Bookmark</title>
 <style type="text/css">
-@import "css/jquery.bookmark.css";
+@import "jquery.bookmark.css";
 
 #basicBookmark ul { width: 320px; }
+.bookmark_list span.bookmark_icons {
+	background: url(bookmarks.gif) no-repeat center;
+}
 </style>
-<script type="text/javascript" src="js/jquery-1.3.2.js"></script>
-<script type="text/javascript" src="js/jquery.bookmark.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="jquery.bookmark.js"></script>
 <script type="text/javascript">
 $(function () {
-	$('#basicBookmark').bookmark({icons: 'img/bookmarks.png'});
+	$('#basicBookmark').bookmark();
 });
 </script>
 </head>
