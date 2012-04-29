@@ -1,4 +1,4 @@
-/* jQuery Bookmark styles v1.3.4 */
+/* jQuery Bookmark styles v1.4.0 */
 .bookmark_popup_text img {
 	border: none;
 	vertical-align: bottom;
@@ -50,7 +50,7 @@ html:first-child .bookmark_list {  /* Opera */
 	border: none;
 }
 .bookmark_list a {
-	width: 100%;
+	display: block;
 	text-decoration: none;
 	cursor: pointer;
 }
@@ -60,8 +60,32 @@ html:first-child .bookmark_list {  /* Opera */
 	height: 16px;
 }
 .bookmark_list span.bookmark_icons {
-	background: url(../img/bookmarks.gif) no-repeat center;
+	background: url(../img/bookmarks.png) no-repeat center;
 }
 .bookmark_list img {
+	border: none;
+}
+#bookmark_all {
+	display: none;
+	position: fixed;
+	z-index: 100;
+	background: #fff;
+	border: 2px solid #888;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+#bookmark_all p {
+	margin: 0em;
+	padding: 0.5em;
+}
+#bookmark_all ul {
+	width: 24em;
+	height: 20em;
+	overflow: auto;
+}
+#bookmark_all li {
+	width: 48%;
+	background-color: transparent;
 	border: none;
 }
