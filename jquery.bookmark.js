@@ -1,5 +1,5 @@
 ﻿/* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.3.2.
+   Sharing bookmarks for jQuery v1.3.3.
    Written by Keith Wood (kbwood{at}iinet.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
@@ -873,10 +873,11 @@ $.extend(Bookmark.prototype, {
 		var sourceTag = (!settings.sourceTag ? '' :
 			encodeURIComponent((url.indexOf('?') > -1 ? '&' : '?') + settings.sourceTag + '='));
 		var url = encodeURIComponent(url);
-		var title = encodeURIComponent(settings.title || document.title);
-		var desc = encodeURIComponent(settings.description || '');
-		settings.onSelect.apply(target, [siteID, site.display,
-			site.url.replace(/\{u\}/, url + (sourceTag ? sourceTag + siteID : '')).
+		var title = encodeURIComponent(settings.title || document.title || $('h1:first').text());
+		var desc = encodeURIComponent(settings.description ||
+			$('meta[name=description]').attr('content') || '');
+		settings.onSelect.apply(target, [siteID, site.display, site.url.replace(/&amp;/g,'&').
+			replace(/\{u\}/, url + (sourceTag ? sourceTag + siteID : '')).
 			replace(/\{t\}/, title).replace(/\{d\}/, desc)]);
 		return false;
 	},
