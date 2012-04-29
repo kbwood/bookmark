@@ -1,5 +1,5 @@
 /* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.0.0.
+   Sharing bookmarks for jQuery v1.0.1.
    Written by Keith Wood (kbwood@virginbroadband.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
@@ -17,80 +17,101 @@ function Bookmark() {
 	this._defaults = {
 		sites: [],  // List of site IDs to use, empty for all
 		icons: 'bookmarks.png', // Horizontal amalgamation of all site icons
+		iconSize: 16,  // The size of the individual icons
 		target: '_blank',  // The name of the target window for the bookmarking links
 		compact: false,  // True if a compact presentation should be used, false for full
 		addFavorite: false,  // True to add a 'add to favourites' link, false for none
 		favoriteText: 'Favorite',  // Display name for the favourites link
-		favoriteIcon: 'favorite.png',  // Icon for the favourites link
+		favoriteIcon: 0,  // Icon for the favourites link
 		addEmail: false,  // True to add a 'e-mail a friend' link, false for none
 		emailText: 'E-mail',  // Display name for the e-mail link
-		emailIcon: 'email.png',  // Icon for the e-mail link
+		emailIcon: 1,  // Icon for the e-mail link
 		emailSubject: 'Interesting page',  // The subject for the e-mail
-		emailBody: 'I thought you might find this page interesting:\n{p}', // The body of the e-mail
-			// Use '{p}' for the position of the page details, use '\n' for new lines
+		emailBody: 'I thought you might find this page interesting:\n{t} ({u})', // The body of the e-mail
+			// Use '{t}' for the position of the page title, '{u}' for the page URL, and '\n' for new lines
 		manualBookmark: 'Please close this dialog and\npress Ctrl-D to bookmark this page.'
 			// Instructions for manually bookmarking the page
 	};
 	this._sites = {  // The definitions of the available bookmarking sites
-		'aol': {display: 'myAOL', icon: 0,
+		'aol': {display: 'myAOL', icon: 2,
 			url: 'http://favorites.my.aol.com/ffclient/webroot/0.4.1/src/html/addBookmarkDialog.html?url={u}&amp;title={t}&amp;favelet=true'},
-		'ask': {display: 'Ask', icon: 1,
+		'ask': {display: 'Ask', icon: 3,
 			url: 'http://myjeeves.ask.com/mysearch/BookmarkIt?v=1.2&amp;t=webpages&amp;url={u}&amp;title={t}'},
-		'blinklist': {display: 'BlinkList', icon: 2,
+		'blinklist': {display: 'BlinkList', icon: 4,
 			url: 'http://www.blinklist.com/index.php?Action=Blink/addblink.php&amp;Url={u}&amp;Title={t}'},
-		'blogmarks': {display: 'Blogmarks', icon: 3,
+		'blogmarks': {display: 'Blogmarks', icon: 5,
 			url: 'http://blogmarks.net/my/new.php?mini=1&amp;simple=1&amp;url={u}&amp;title={t}'},
-		'delicious': {display: 'del.icio.us', icon: 4,
+		'care2': {display: 'Care2', icon: 6,
+			url: 'http://www.care2.com/news/news_post.html?url={u}&amp;title={t}'},
+		'delicious': {display: 'del.icio.us', icon: 7,
 			url: 'http://del.icio.us/post?url={u}&amp;title={t}'},
-		'digg': {display: 'Digg', icon: 5,
+		'digg': {display: 'Digg', icon: 8,
 			url: 'http://digg.com/submit?phase=2&amp;url={u}&amp;title={t}'},
-		'diigo': {display: 'Diigo', icon: 6,
+		'diigo': {display: 'Diigo', icon: 9,
 			url: 'http://www.diigo.com/post?url={u}&amp;title={t}'},
-		'facebook': {display: 'Facebook', icon: 7,
+		'dzone': {display: 'DZone', icon: 10,
+			url: 'http://www.dzone.com/links/add.html?url={u}&amp;title={t}'},
+		'facebook': {display: 'Facebook', icon: 11,
 			url: 'http://www.facebook.com/sharer.php?u={u}&amp;t={t}'},
-		'fark': {display: 'Fark', icon: 8,
+		'fark': {display: 'Fark', icon: 12,
 			url: 'http://cgi.fark.com/cgi/fark/submit.pl?new_url={u}&amp;new_comment={t}'},
-		'faves': {display: 'Faves', icon: 9,
+		'faves': {display: 'Faves', icon: 13,
 			url: 'http://faves.com/Authoring.aspx?u={u}&amp;t={t}'},
-		'feedmelinks': {display: 'Feed Me Links', icon: 10,
+		'feedmelinks': {display: 'Feed Me Links', icon: 14,
 			url: 'http://feedmelinks.com/categorize?from=toolbar&amp;op=submit&amp;url={u}&amp;name={t}'},
-		'furl': {display: 'Furl', icon: 11,
+		'furl': {display: 'Furl', icon: 15,
 			url: 'http://www.furl.net/storeIt.jsp?t={t}&amp;u={u}'},
-		'google': {display: 'Google', icon: 12,
+		'google': {display: 'Google', icon: 16,
 			url: 'http://www.google.com/bookmarks/mark?op=edit&amp;bkmk={u}&amp;title={t}'},
-		'linkagogo': {display: 'LinkaGoGo', icon: 13,
+		'hugg': {display: 'Hugg', icon: 17,
+			url: 'http://www.hugg.com/submit?url={u}'},
+		'linkagogo': {display: 'LinkaGoGo', icon: 18,
 			url: 'http://www.linkagogo.com/go/AddNoPopup?url={u}&amp;title={t}'},
-		'magnolia': {display: 'ma.gnolia', icon: 14,
+		'livejournal': {display: 'LiveJournal', icon: 19,
+			url: 'http://www.livejournal.com/update.bml?subject={u}'},
+		'magnolia': {display: 'ma.gnolia', icon: 20,
 			url: 'http://ma.gnolia.com/bookmarklet/add?url={u}&amp;title={t}'},
-		'misterwong': {display: 'Mister Wong', icon: 15,
+		'mindbody': {display: 'MindBodyGreen', icon: 21,
+			url: 'http://www.mindbodygreen.com/passvote.action?u={u}'},
+		'misterwong': {display: 'Mister Wong', icon: 22,
 			url: 'http://www.mister-wong.com/index.php?action=addurl&amp;bm_url={u}&amp;bm_description={t}'},
-		'multiply': {display: 'Multiply', icon: 16,
+		'mixx': {display: 'Mixx', icon: 23,
+			url: 'http://www.mixx.com/submit/story?page_url={u}&amp;title={t}'},
+		'multiply': {display: 'Multiply', icon: 24,
 			url: 'http://multiply.com/gus/journal/compose/addthis?body=&amp;url={u}&amp;subject={t}'},
-		'myspace': {display: 'MySpace', icon: 17,
+		'myspace': {display: 'MySpace', icon: 25,
 			url: 'http://www.myspace.com/Modules/PostTo/Pages/?c={u}&amp;t={t}'},
-		'netscape': {display: 'Netscape', icon: 18,
+		'netscape': {display: 'Netscape', icon: 26,
 			url: 'http://www.netscape.com/submit/?U={u}&amp;T={t}'},
-		'netvouz': {display: 'Netvouz', icon: 19,
+		'netvouz': {display: 'Netvouz', icon: 27,
 			url: 'http://netvouz.com/action/submitBookmark?url={u}&amp;title={t}&amp;popup=no'},
-		'newsvine': {display: 'Newsvine', icon: 20,
-			url: 'http://www.newsvine.com/_wine/save?popoff=0&amp;u={u}&amp;h={t}'},
-		'reddit': {display: 'reddit', icon: 21,
+		'newsvine': {display: 'Newsvine', icon: 28,
+			url: 'http://www.newsvine.com/_wine/save?u={u}&amp;h={t}'},
+		'nowpublic': {display: 'NowPublic', icon: 29,
+			url: 'http://view.nowpublic.com/?src={u}&amp;t={t}'},
+		'reddit': {display: 'reddit', icon: 30,
 			url: 'http://reddit.com/submit?url={u}&amp;title={t}'},
-		'segnalo': {display: 'Segnalo', icon: 22,
+		'segnalo': {display: 'Segnalo', icon: 31,
 			url: 'http://segnalo.alice.it/post.html.php?url={u}&amp;title={t}'},
-		'simpy': {display: 'Simpy', icon: 23,
+		'simpy': {display: 'Simpy', icon: 32,
 			url: 'http://www.simpy.com/simpy/LinkAdd.do?href={u}&amp;title={t}'},
-		'slashdot': {display: 'Slashdot', icon: 24,
+		'slashdot': {display: 'Slashdot', icon: 33,
 			url: 'http://slashdot.org/bookmark.pl?url={u}&amp;title={t}'},
-		'stumbleupon': {display: 'StumbleUpon', icon: 25,
+		'smarking': {display: 'Smarking', icon: 34,
+			url: 'http://smarking.com/editbookmark/?url={u}&amp;title={t}'},
+		'spurl': {display: 'Spurl', icon: 35,
+			url: 'http://www.spurl.net/spurl.php?url={u}&amp;title={t}'},
+		'stumbleupon': {display: 'StumbleUpon', icon: 36,
 			url: 'http://www.stumbleupon.com/submit?url={u}&amp;title={t}'},
-		'tailrank': {display: 'Tailrank', icon: 26,
+		'tailrank': {display: 'Tailrank', icon: 37,
 			url: 'http://tailrank.com/share/?title={t}&amp;link_href={u}'},
-		'technorati': {display: 'Technorati', icon: 27,
+		'technorati': {display: 'Technorati', icon: 38,
 			url: 'http://www.technorati.com/faves?add={u}'},
-		'windows': {display: 'Windows Live', icon: 28,
+		'thisnext': {display: 'ThisNext', icon: 39,
+			url: 'http://www.thisnext.com/pick/new/submit/sociable/?url={u}&amp;name={t}'},
+		'windows': {display: 'Windows Live', icon: 40,
 			url: 'https://favorites.live.com/quickadd.aspx?marklet=1&amp;mkt=en-us&amp;url={u}&amp;title={t}'},
-		'yahoo': {display: 'Yahoo MyWeb', icon: 29,
+		'yahoo': {display: 'Yahoo MyWeb', icon: 41,
 			url: 'http://myweb2.search.yahoo.com/myresults/bookmarklet?t={t}&amp;u={u}'}
 	};
 }
@@ -158,17 +179,19 @@ $.extend(Bookmark.prototype, {
 			});
 		}
 		var html = '<ul class="bookmark_list' + (settings.compact ? ' bookmark_compact' : '') + '">';
-		var addSite = function(display, icon, url) {
-			var html = '<li><a href="' + url + '"' + (settings.target ? ' target="' + settings.target + '"' : '') + '>';
+		var addSite = function(display, icon, url, onclick) {
+			var html = '<li><a href="' + url + '"' + (onclick ? ' onclick="' + onclick + '"' :
+				(settings.target ? ' target="' + settings.target + '"' : '')) + '>';
 			if (icon != null) {
 				if (typeof icon == 'number') {
-					html += '<span title="' + display + '" style="display: inline-block; width: 16px; height: 16px;' +
-						($.browser.mozilla ? ' padding-left: 16px;' : '') + ' background: ' +
-						'transparent url(' + settings.icons + ') no-repeat -' + (icon * 16) + 'px 0px;"></span>';
+					html += '<span title="' + display + '" style="background: ' +
+						'transparent url(' + settings.icons + ') no-repeat -' +
+						(icon * settings.iconSize) + 'px 0px;' +
+						($.browser.mozilla ? ' padding-left: ' + settings.iconSize +
+						'px; padding-bottom: 3px;' : '') + '"></span>';
 				}
 				else {
-					html += '<img src="' + icon + '" alt="' + display + '" title="' + display + '"' +
-						($.browser.safari ? ' style="margin-top: 2px;"' : '') + '/>';
+					html += '<img src="' + icon + '" alt="' + display + '" title="' + display + '"/>';
 				}
 				html +=	(settings.compact ? '' : '&#xa0;');
 			}
@@ -176,17 +199,14 @@ $.extend(Bookmark.prototype, {
 			return html;
 		};
 		if (settings.addFavorite) {
-			html += '<li><a href="#" onclick="jQuery.bookmark._addFavourite()">' +
-				(settings.favoriteIcon ? '<img src="' + settings.favoriteIcon +
-				'" alt="' + settings.favoriteText + '" title="' + settings.favoriteText + '"' +
-				($.browser.safari ? ' style="margin-top: 2px;"' : '') + '/>' +
-				(settings.compact ? '' : '&#xa0;') : '') +
-				(settings.compact ? '' : settings.favoriteText) + '</li>';
+			html += addSite(settings.favoriteText, settings.favoriteIcon,
+				'#', 'jQuery.bookmark._addFavourite()');
 		}
 		if (settings.addEmail) {
 			html += addSite(settings.emailText, settings.emailIcon,
 				'mailto:?subject=' + escape(settings.emailSubject) + '&amp;body=' +
-				escape(settings.emailBody.replace(/{p}/, document.title + ' (' + window.location.href + ')')));
+				escape(settings.emailBody.replace(/{u}/, window.location.href).
+				replace(/{t}/, document.title)));
 		}
 		var allSites = this._sites;
 		$.each(sites, function(index, id) {
@@ -248,7 +268,7 @@ $.fn.bookmark = function(options) {
 };
 
 /* Initialise the bookmarking functionality. */
-$(document).ready(function() {
+$(function() {
    $.bookmark = new Bookmark(); // singleton instance
 });
 
