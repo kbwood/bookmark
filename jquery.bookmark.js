@@ -1,5 +1,5 @@
 ﻿/* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.1.0.
+   Sharing bookmarks for jQuery v1.1.1.
    Written by Keith Wood (kbwood@virginbroadband.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
@@ -11,6 +11,8 @@
 */
 
 (function($) { // Hide scope, no $ conflict
+
+var PROP_NAME = 'bookmark';
 
 /* Bookmark sharing manager. */
 function Bookmark() {
@@ -35,6 +37,8 @@ function Bookmark() {
 			// Instructions for manually bookmarking the page
 	};
 	this._sites = {  // The definitions of the available bookmarking sites
+	    'alltagz': {display: 'alltagz', icon: 69,
+			url: 'http://www.alltagz.de/bookmarks/?action=add&address={u}&amp;title={t}'},
 		'aol': {display: 'myAOL', icon: 2,
 			url: 'http://favorites.my.aol.com/ffclient/webroot/0.4.1/src/html/addBookmarkDialog.html?url={u}&amp;title={t}&amp;favelet=true'},
 		'ask': {display: 'Ask', icon: 3,
@@ -57,8 +61,8 @@ function Bookmark() {
 			url: 'http://current.com/clipper.htm?url={u}&amp;title={t}'},
 		'delicious': {display: 'del.icio.us', icon: 7,
 			url: 'http://del.icio.us/post?url={u}&amp;title={t}'},
-//		'designfloat': {display: 'DesignFloat', icon: 50,
-//			url: 'http://www.designfloat.com/submit.php?url={u}'},
+		'designfloat': {display: 'Design Float', icon: 50,
+			url: 'http://www.designfloat.com/submit.php?url={u}&amp;title={t}'},
 		'digg': {display: 'Digg', icon: 8,
 			url: 'http://digg.com/submit?phase=2&amp;url={u}&amp;title={t}'},
 		'diigo': {display: 'Diigo', icon: 9,
@@ -91,6 +95,8 @@ function Bookmark() {
 			url: 'http://www.kirtsy.com/submit.php?url={u}'},
 		'kool': {display: 'Koolontheweb', icon: 43,
 			url: 'http://www.koolontheweb.com/post?url={u}&title={t}'},
+	    'linkarena': {display: 'Linkarena', icon: 70,
+			url: 'http://linkarena.com/bookmarks/addlink/?url={u}&amp;title={t}&amp;desc=&amp;tags='},			
 		'linkagogo': {display: 'LinkaGoGo', icon: 18,
 			url: 'http://www.linkagogo.com/go/AddNoPopup?url={u}&amp;title={t}'},
 		'linkedin': {display: 'LinkedIn', icon: 66,
@@ -229,7 +235,9 @@ $.extend(Bookmark.prototype, {
 
 	/* Construct the requested bookmarking links. */
 	_updateBookmark: function(target, settings) {
-		settings = extendRemove(extendRemove({}, this._defaults), settings);
+		var oldSettings = $.data(target[0], PROP_NAME) || $.extend({}, this._defaults);
+		settings = extendRemove(oldSettings, settings || {});
+		$.data(target[0], PROP_NAME, settings);
 		var sites = settings.sites;
 		if (sites.length == 0) {
 			$.each(this._sites, function(id) {
@@ -305,12 +313,12 @@ $.extend(Bookmark.prototype, {
 		var convert = function(value) {
 			return {thin: 1, medium: 2, thick: 3}[value] || value;
 		};
-		return [parseInt(convert(elem.css('border-left-width'))) +
-			parseInt(convert(elem.css('border-right-width'))) +
-			parseInt(elem.css('padding-left')) + parseInt(elem.css('padding-right')),
-			parseInt(convert(elem.css('border-top-width'))) +
-			parseInt(convert(elem.css('border-bottom-width'))) +
-			parseInt(elem.css('padding-top')) + parseInt(elem.css('padding-bottom'))];
+		return [parseInt(convert(elem.css('border-left-width')), 10) +
+			parseInt(convert(elem.css('border-right-width')), 10) +
+			parseInt(elem.css('padding-left'), 10) + parseInt(elem.css('padding-right'), 10),
+			parseInt(convert(elem.css('border-top-width')), 10) +
+			parseInt(convert(elem.css('border-bottom-width')), 10) +
+			parseInt(elem.css('padding-top'), 10) + parseInt(elem.css('padding-bottom'), 10)];
 	},
 
 	/* Remove the bookmarking widget from a div. */
@@ -319,8 +327,8 @@ $.extend(Bookmark.prototype, {
 		if (!target.hasClass(this.markerClassName)) {
 			return;
 		}
-		target.removeClass(this.markerClassName);
-		target.empty();
+		target.removeClass(this.markerClassName).empty();
+		$.removeData(target[0], PROP_NAME);
 	},
 
 	/* Add the current page as a favourite in the browser. */

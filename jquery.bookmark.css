@@ -1,4 +1,4 @@
-/* jQuery Bookmark styles */
+/* jQuery Bookmark styles v1.1.1 */
 .bookmark_popup_text {
 	cursor: pointer;
 	color: blue;
@@ -15,7 +15,8 @@
 	border: 1px solid #aaa;
 }
 .bookmark_list {
-	display: block;
+	display: inline-block;
+	float: left;
 	list-style-type: none;
 	font-size: 80%;
 	margin: 0px;
