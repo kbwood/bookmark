@@ -1,4 +1,4 @@
-/* jQuery Bookmark styles v1.2.0 */
+/* jQuery Bookmark styles v1.3.0 */
 .bookmark_popup_text img {
 	border: none;
 	vertical-align: bottom;
@@ -60,7 +60,7 @@ html:first-child .bookmark_list {  /* Opera */
 	height: 16px;
 }
 .bookmark_list span.bookmark_icons {
-	background: url(../img/bookmarks.png) no-repeat center;
+	background: url(../img/bookmarks.gif) no-repeat center;
 }
 .bookmark_list img {
 	border: none;

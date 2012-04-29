@@ -1,5 +1,5 @@
 ﻿/* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.2.0.
+   Sharing bookmarks for jQuery v1.3.0.
    Written by Keith Wood (kbwood{at}iinet.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
@@ -16,12 +16,15 @@ var PROP_NAME = 'bookmark';
 
 /* Bookmark sharing manager. */
 function Bookmark() {
+	this._uuid = new Date().getTime(); // Unique identifier seed
 	this._defaults = {
 		url: '',  // The URL to bookmark, leave blank for the current page
+		sourceTag: '', // Extra tag to add to URL to indicate source when it returns
 		title: '',  // The title to bookmark, leave blank for the current one
+		description: '',  // A longer description of the site
 		sites: [],  // List of site IDs to use, empty for all
 		iconsStyle: 'bookmark_icons', // CSS class for site icons
-		icons: 'bookmarks.png', // Horizontal amalgamation of all site icons
+		icons: 'bookmarks.gif', // Horizontal amalgamation of all site icons
 		iconSize: 16,  // The size of the individual icons
 		iconCols: 16,  // The number of icons across the combined image
 		target: '_blank',  // The name of the target window for the bookmarking links
@@ -37,11 +40,17 @@ function Bookmark() {
 		emailIcon: 1,  // Icon for the e-mail link
 		emailSubject: 'Interesting page',  // The subject for the e-mail
 		emailBody: 'I thought you might find this page interesting:\n{t} ({u})', // The body of the e-mail
-			// Use '{t}' for the position of the page title, '{u}' for the page URL, and '\n' for new lines
-		manualBookmark: 'Please close this dialog and\npress Ctrl-D to bookmark this page.'
+			// Use '{t}' for the position of the page title, '{u}' for the page URL,
+			// '{d}' for the description, and '\n' for new lines
+		manualBookmark: 'Please close this dialog and\npress Ctrl-D to bookmark this page.',
 			// Instructions for manually bookmarking the page
+		onSelect: null // Callback on selection
 	};
-	this._sites = {  // The definitions of the available bookmarking sites
+	this._sites = {  // The definitions of the available bookmarking sites, in URL use
+		// '{t}' for the position of the page title, '{u}' for the page URL,
+		// and '{d}' for the description
+		'a1webmarks': {display: 'A1 webmarks', icon: 179,
+			url: 'http://www.a1-webmarks.com/bm_edit.html?u={u}&amp;t={t}'},
 	    'alltagz': {display: 'alltagz', icon: 69,
 			url: 'http://www.alltagz.de/bookmarks/?action=add&amp;address={u}&amp;title={t}'},
 		'allvoices': {display: 'Allvoices', icon: 75,
@@ -68,6 +77,8 @@ function Bookmark() {
 			url: 'http://bit.ly/?url={u}'},
 		'bizsugar': {display: 'bizSugar', icon: 130,
 			url: 'http://www.bizsugar.com/bizsugarthis.php?url={u}'},
+		'bleetbox': {display: 'bleetbox', icon: 180,
+			url: 'http://bleetbox.com/bar?url={u}'},
 		'blinklist': {display: 'BlinkList', icon: 4,
 			url: 'http://www.blinklist.com/index.php?Action=Blink/addblink.php&amp;Url={u}&amp;Title={t}'},
 		'bloggy': {display: 'Bloggy', icon: 131,
@@ -75,17 +86,21 @@ function Bookmark() {
 		'blogmarks': {display: 'Blogmarks', icon: 5,
 			url: 'http://blogmarks.net/my/new.php?mini=1&amp;simple=1&amp;url={u}&amp;title={t}'},
 		'bobrdobr': {display: 'Bobrdobr', icon: 132,
-			url: 'http://bobrdobr.ru/addext.html?url={u}&amp;title={t}&amp;desc='},
+			url: 'http://bobrdobr.ru/addext.html?url={u}&amp;title={t}&amp;desc={d}'},
 		'bookmarkit': {display: 'bookmark.it', icon: 71,
 			url: 'http://www.bookmark.it/bookmark.php?url={u}'},
 		'bookmarksfr': {display: 'bookmarks.fr', icon: 78,
 			url: 'http://www.bookmarks.fr/favoris/AjoutFavori?action=add&amp;address={u}&amp;title={t}'},
+		'bordom': {display: 'Bordom', icon: 181,
+			url: 'http://www.bordom.net/submit/?url={u}&amp;title={t}'},
 		'brainify': {display: 'Brainify', icon: 133,
 			url: 'http://www.brainify.com/Bookmark.aspx?url={u}&amp;title={t}'},
 		'bryderi': {display: 'Bryderi', icon: 134,
 			url: 'http://bryderi.se/add.html?u={u}'},
 		'buddymarks': {display: 'BuddyMarks', icon: 79,
 			url: 'http://buddymarks.com/add_bookmark.php?bookmark_url={u}&amp;bookmark_title={t}'},
+		'bukmark': {display: 'Bukmark', icon: 182,
+			url: 'http://www.buk-mark.com/submit.php?url={u}'},
 		'bx': {display: 'Business Exchange', icon: 73,
 			url: 'http://bx.businessweek.com/api/add-article-to-bx.tn?url={u}'},
 		'bzzster': {display: 'Bzzster', icon: 80,
@@ -105,13 +120,15 @@ function Bookmark() {
 		'designfloat': {display: 'Design Float', icon: 50,
 			url: 'http://www.designfloat.com/submit.php?url={u}&amp;title={t}'},
 		'designmoo': {display: 'DesignMoo', icon: 135,
-			url: 'http://designmoo.com/submit?url={u}&amp;title={t}&amp;body='},
+			url: 'http://designmoo.com/submit?url={u}&amp;title={t}&amp;body={d}'},
 		'digg': {display: 'Digg', icon: 8,
 			url: 'http://digg.com/submit?phase=2&amp;url={u}&amp;title={t}'},
 		'diglog': {display: 'Diglog', icon: 136,
-			url: 'http://www.diglog.com/submit.aspx?url={u}&amp;title={t}&amp;description='},
+			url: 'http://www.diglog.com/submit.aspx?url={u}&amp;title={t}&amp;description={d}'},
 		'diigo': {display: 'Diigo', icon: 9,
 			url: 'http://www.diigo.com/post?url={u}&amp;title={t}'},
+		'domelhor': {display: 'Do Melhor', icon: 183,
+			url: 'http://domelhor.net/submit.php?url={u}&title={t}'},
 		'doower': {display: 'Doower', icon: 137,
 			url: 'http://www.doower.com/share.php?u={u}&amp;t={t}'},
 		'dosti': {display: 'Dosti', icon: 138,
@@ -123,7 +140,9 @@ function Bookmark() {
 		'edelight': {display: 'edelight', icon: 140,
 			url: 'http://www.edelight.de/geschenk/neu?purl={u}'},
 		'ekudos': {display: 'eKudos', icon: 141,
-			url: 'http://www.ekudos.nl/artikel/nieuw?url={u}&amp;title={t}&amp;desc='},
+			url: 'http://www.ekudos.nl/artikel/nieuw?url={u}&amp;title={t}&amp;desc={d}'},
+		'embarkons': {display: 'Embarkons', icon: 184,
+			url: 'http://www.embarkons.com/sharer.php?u={u}&t={t}'},
 		'eucliquei': {display: 'euCliquei', icon: 142,
 			url: 'http://www.eucliquei.com.br/index.asp?a=clicar_novo&amp;url={u}&amp;titulo={t}&amp;trecho='},
 		'evernote': {display: 'Evernote', icon: 83,
@@ -138,10 +157,12 @@ function Bookmark() {
 			url: 'http://faves.com/Authoring.aspx?u={u}&amp;t={t}'},
 		'favoritus': {display: 'FavoritUs', icon: 144,
 			url: 'http://www.favoritus.com/post.php?getlink={u}&amp;gettitle={t}'},
+		'fnews': {display: 'fnews', icon: 185,
+			url: 'http://fnews.az/node/add/drigg?url={u}&amp;title={t}&amp;body={d}'},
 		'folkd': {display: 'Folkd', icon: 85,
 			url: 'http://www.folkd.com/submit/{u}'},
 		'forgetfoo': {display: 'forgetfoo', icon: 145,
-			url: 'http://www.forgetfoo.com/?inc=share&amp;url={u}&amp;title={t}&amp;desc='},
+			url: 'http://www.forgetfoo.com/?inc=share&amp;url={u}&amp;title={t}&amp;desc={d}'},
 		'foxiewire': {display: 'FoxieWire', icon: 86,
 			url: 'http://www.foxiewire.com/submit?url={u}&amp;title={t}'},
 		'fresqui': {display: 'Fresqui', icon: 51,
@@ -156,6 +177,8 @@ function Bookmark() {
 			url: 'http://www.gacetilla.org/publish-form?url={u}&amp;title={t}'},
 		'globalgrind': {display: 'Global Grind', icon: 88,
 			url: 'http://globalgrind.com/submission/submit.aspx?url={u}&amp;type=Article&amp;title={t}'},
+		'gluvsnap': {display: 'GluvSnap', icon: 186,
+			url: 'http://www.gluvsnap.com/news/pin/submit.php?url={u}'},
 		'google': {display: 'Google', icon: 16,
 			url: 'http://www.google.com/bookmarks/mark?op=edit&amp;bkmk={u}&amp;title={t}'},
 		'gravee': {display: 'Gravee', icon: 89,
@@ -163,7 +186,9 @@ function Bookmark() {
 		'grumper': {display: 'Grumper', icon: 147,
 			url: 'http://www.grumper.org/add.php?desc={u}&amp;title={t}'},
 		'habergentr': {display: 'haber.gen.tr', icon: 148,
-			url: 'http://www.haber.gen.tr/edit?url={u}&amp;title={t}&amp;description='},
+			url: 'http://www.haber.gen.tr/edit?url={u}&amp;title={t}&amp;description={d}'},
+		'hackernews': {display: 'HackerNews', icon: 187,
+			url: 'http://news.ycombinator.com/submitlink?u={u}&amp;t={t}'},
 		'hadashhot': {display: 'Hadash Hot', icon: 149,
 			url: 'http://www.hadash-hot.co.il/submit.php?url={u}&amp;phase=1'},
 		'healthranker': {display: 'HealthRanker', icon: 90,
@@ -174,6 +199,8 @@ function Bookmark() {
 			url: 'http://www.hemidemi.com/user_bookmark/new?url={u}&amp;title={t}'},
 		'hipstr': {display: 'hipstr', icon: 151,
 			url: 'http://www.hipstr.com/submit.php?burl={u}'},
+		'hitmarks': {display: 'hitmarks', icon: 188,
+			url: 'http://www.hitmarks.com/submit.php?url={u}&amp;t={t}'},
 		'hotklix': {display: 'hotklix', icon: 152,
 			url: 'http://www.hotklix.com/?ref=share_this&amp;addurl={u}'},
 		'hugg': {display: 'Hugg', icon: 17,
@@ -194,6 +221,8 @@ function Bookmark() {
 			url: 'http://www.jumptags.com/add/?url={u}&amp;title={t}'},
 		'kaboodle': {display: 'Kaboodle', icon: 65,
 			url: 'http://www.kaboodle.com/grab/addItemWithUrl?url={u}&amp;pidOrRid=pid=&amp;redirectToKPage=true'},
+		'kaevur': {display: 'Kaevur', icon: 189,
+			url: 'http://www.kaevur.com/submit.php?url={u}'},
 		'khabbr': {display: 'Khabbr', icon: 97,
 			url: 'http://www.khabbr.com/submit.php?out=yes&amp;url={u}'},
 		'kledy': {display: 'Kledy', icon: 98,
@@ -204,12 +233,16 @@ function Bookmark() {
 			url: 'http://www.koolontheweb.com/post?url={u}&amp;title={t}'},
 		'kwoff': {display: 'Kwoff', icon: 155,
 			url: 'http://www.kwoff.com/submit.php?url={u}'},
+		'laaikit': {display: 'laaik.it', icon: 190,
+			url: 'http://laaik.it/NewStoryCompact.aspx?uri={u}&amp;headline={t}&amp;description={d}'},
+		'librerio': {display: 'Librerio', icon: 191,
+			url: 'http://www.librerio.com/inbox?u={u}&amp;t={t}'},
 	    'linkarena': {display: 'Linkarena', icon: 70,
-			url: 'http://linkarena.com/bookmarks/addlink/?url={u}&amp;title={t}&amp;desc=&amp;tags='},			
+			url: 'http://linkarena.com/bookmarks/addlink/?url={u}&amp;title={t}&amp;desc={d}&amp;tags='},			
 		'linkagogo': {display: 'LinkaGoGo', icon: 18,
 			url: 'http://www.linkagogo.com/go/AddNoPopup?url={u}&amp;title={t}'},
 		'linkedin': {display: 'LinkedIn', icon: 66,
-			url: 'http://www.linkedin.com/shareArticle?mini=true&amp;url={u}&amp;title={t}&amp;ro=false&amp;summary=&amp;source='},
+			url: 'http://www.linkedin.com/shareArticle?mini=true&amp;url={u}&amp;title={t}&amp;ro=false&amp;summary={d}&amp;source='},
 		'linkninja': {display: 'LinkNinja', icon: 156,
 			url: 'http://linkninja.com.br/enviar_link.php?story_url={u}'},
 		'livejournal': {display: 'LiveJournal', icon: 19,
@@ -220,6 +253,8 @@ function Bookmark() {
 			url: 'http://www.lynki.com/submit.php?url={u}'},
 		'maple': {display: 'Maple', icon: 99,
 			url: 'http://www.maple.nu/bookmarks/bookmarklet?bookmark[url]={u}&amp;bookmark[description]={t}'},
+		'memori': {display: 'memori.ru', icon: 192,
+			url: 'http://memori.ru/link/?sm=1&amp;u_data[url]={u}'},
 		'meneame': {display: 'menéame', icon: 55,
 			url: 'http://meneame.net/submit.php?url={u}'},
 		'mindbody': {display: 'MindBodyGreen', icon: 21,
@@ -251,11 +286,15 @@ function Bookmark() {
 		'nowpublic': {display: 'NowPublic', icon: 29,
 			url: 'http://view.nowpublic.com/?src={u}&amp;t={t}'},
 		'nujij': {display: 'Nujij', icon: 159,
-			url: 'http://nujij.nl/jij.lynkx?u={u}&amp;t={t}&amp;b='},
+			url: 'http://nujij.nl/jij.lynkx?u={u}&amp;t={t}&amp;b={d}'},
 		'oknotizie': {display: 'OKNOtizie', icon: 57,
 			url: 'http://oknotizie.alice.it/post?url={u}&amp;title={t}'},
 		'oneview': {display: 'OneView', icon: 72,
 			url: 'http://www.oneview.de/quickadd/neu/addBookmark.jsf?URL={u}&amp;title={t}'},
+		'orkut': {display: 'Orkut', icon: 193,
+			url: 'http://promote.orkut.com/preview?nt=orkut.com&amp;du={u}&amp;tt={t}&amp;cn='},
+		'osmosus': {display: 'Osmosus', icon: 194,
+			url: 'http://www.osmosus.com/share?url={u}&amp;title={t}&amp;description={d}'},
 		'oyyla': {display: 'Oyyla', icon: 160,
 			url: 'http://www.oyyla.com/gonder?phase=2&amp;url={u}'},
 		'phonefavs': {display: 'PhoneFavs', icon: 161,
@@ -287,7 +326,7 @@ function Bookmark() {
 		'segnalo': {display: 'Segnalo', icon: 31,
 			url: 'http://segnalo.alice.it/post.html.php?url={u}&amp;title={t}'},
 		'shetoldme': {display: 'She Told Me', icon: 167,
-			url: 'http://shetoldme.com/publish?url={u}&amp;title={t}&amp;body='},
+			url: 'http://shetoldme.com/publish?url={u}&amp;title={t}&amp;body={d}'},
 		'shoutwire': {display: 'ShoutWire', icon: 108,
 			url: 'http://www.shoutwire.com/?s={u}'},
 		'simpy': {display: 'Simpy', icon: 32,
@@ -312,12 +351,16 @@ function Bookmark() {
 			url: 'http://www.startaid.com/index.php?st=AddBrowserLink&amp;type=Detail&amp;v=3&amp;urlname={u}&amp;urltitle={t}'},
 		'strands': {display: 'Strands', icon: 112,
 			url: 'http://www.strands.com/tools/share/webpage?url={u}&amp;title={t}'},
+		'studivz': {display: 'studiVZ', icon: 195,
+			url: 'http://www.studivz.net/Suggest/Selection/?u={u}&amp;desc={t}'},
 		'stumbleupon': {display: 'StumbleUpon', icon: 36,
 			url: 'http://www.stumbleupon.com/submit?url={u}&amp;title={t}'},
 		'stumpedia': {display: 'Stumpedia', icon: 113,
 			url: 'http://www.stumpedia.com/submit?url={u}&amp;title={t}'},
+		'stylehive': {display: 'Stylehive', icon: 196,
+			url: 'http://www.stylehive.com/savebookmark/index.htm?url={u}'},
 		'svejo': {display: 'Svejo', icon: 170,
-			url: 'http://svejo.net/story/submit_by_url?url={u}&amp;title={t}&amp;summary='},
+			url: 'http://svejo.net/story/submit_by_url?url={u}&amp;title={t}&amp;summary={d}'},
 		'tagza': {display: 'Tagza', icon: 115,
 			url: 'http://www.tagza.com/submit.php?url={u}'},
 		'technorati': {display: 'Technorati', icon: 38,
@@ -330,8 +373,14 @@ function Bookmark() {
 			url: 'http://www.thisnext.com/pick/new/submit/sociable/?url={u}&amp;name={t}'},
 		'tipd': {display: 'Tip\'d', icon: 118,
 			url: 'http://tipd.com/submit.php?url={u}'},
+		'transferr': {display: 'Transferr', icon: 197,
+			url: 'http://www.transferr.com/link.php?url={u}'},
+		'tulinq': {display: 'tulinq', icon: 198,
+			url: 'http://www.tulinq.com/enviar?url={u}&amp;title={t}&amp;body={d}'},
 		'tumblr': {display: 'tumblr', icon: 119,
 			url: 'http://www.tumblr.com/share?v=3&amp;u={u}&amp;t={t}'},
+		'tusul': {display: 'tusul.com', icon: 199,
+			url: 'http://www.tusul.com/submit.php?url={u}&amp;title={t}&amp;bodytext={d}'},
 		'twitthis': {display: 'TwitThis', icon: 45,
 			url: 'http://twitthis.com/twit?url={u}'},
 		'viadeo': {display: 'Viadeo', icon: 120,
@@ -355,7 +404,7 @@ function Bookmark() {
 		'wovre': {display: 'Wovre', icon: 174,
 			url: 'http://www.wovre.com/share.php?link_url={u}'},
 		'wykop': {display: 'Wykop', icon: 175,
-			url: 'http://www.wykop.pl/dodaj?url={u}&amp;title={t}&amp;desc='},
+			url: 'http://www.wykop.pl/dodaj?url={u}&amp;title={t}&amp;desc={d}'},
 		'xanga': {display: 'Xanga', icon: 59,
 			url: 'http://www.xanga.com/private/editorx.aspx?u={u}&amp;t={t}'},
 		'xerpi': {display: 'Xerpi', icon: 125,
@@ -420,14 +469,26 @@ $.extend(Bookmark.prototype, {
 			return;
 		}
 		target.addClass(this.markerClassName);
+		if (!target[0].id) {
+			target[0].id = 'bm' + (++this._uuid);
+		}
 		this._updateBookmark(target, settings);
 	},
 
-	/* Reconfigure the settings for a bookmarking div. */
-	_changeBookmark: function(target, settings) {
+	/* Reconfigure the settings for a bookmarking div.
+	   @param  target    (element) the bookmark container
+	   @param  settings  (object) the new settings for this container or
+	                     (string) a single setting name
+	   @param  value     (any) the single setting's value */
+	_changeBookmark: function(target, settings, value) {
 		target = $(target);
 		if (!target.hasClass(this.markerClassName)) {
 			return;
+		}
+		if (typeof settings == 'string') {
+			var name = settings;
+			settings = {};
+			settings[name] = value;
 		}
 		this._updateBookmark(target, settings);
 	},
@@ -479,6 +540,7 @@ $.extend(Bookmark.prototype, {
 		};
 		var url = settings.url || window.location.href;
 		var title = settings.title || document.title;
+		var desc = settings.description || '';
 		if (settings.addFavorite) {
 			html += addSite(settings.favoriteText, settings.favoriteIcon,
 				'#', 'jQuery.bookmark._addFavourite(\'' + url.replace(/'/g, '\\\'') +
@@ -488,31 +550,36 @@ $.extend(Bookmark.prototype, {
 			html += addSite(settings.emailText, settings.emailIcon,
 				'mailto:?subject=' + encodeURIComponent(settings.emailSubject) +
 				'&amp;body=' + encodeURIComponent(settings.emailBody.
-				replace(/{u}/, url).replace(/{t}/, title)));
+				replace(/\{u\}/, url).replace(/\{t\}/, title).replace(/\{d\}/, settings.desc)));
 		}
+		var sourceTag = (!settings.sourceTag ? '' :
+			encodeURIComponent((url.indexOf('?') > -1 ? '&' : '?') + settings.sourceTag + '='));
 		url = encodeURIComponent(url);
 		title = encodeURIComponent(title);
+		desc = encodeURIComponent(desc);
 		var allSites = this._sites;
 		$.each(sites, function(index, id) {
 			var site = allSites[id];
 			if (site) {
-				html += addSite(site.display, site.icon,
-					site.url.replace(/{u}/, url).replace(/{t}/, title));
+				html += addSite(site.display, site.icon, (settings.onSelect ? '#' :
+					site.url.replace(/\{u\}/, url + (sourceTag ? sourceTag + id : '')).
+					replace(/\{t\}/, title).replace(/\{d\}/, desc)),
+					(settings.onSelect ? 'return jQuery.bookmark._selected(\'' + target[0].id +
+					'\',\'' + id + '\')' : ''));
 			}
 		});
 		html += '</ul>' + (settings.popup ? '</div>' : '');
 		target.html(html);
 		if (settings.popup) {
-			$(target).find('.bookmark_popup_text').click(function() {
+			target.find('.bookmark_popup_text').click(function() {
 				var target = $(this).parent();
 				var offset = target.offset();
-				$('.bookmark_popup', target).css('left', offset.left).
-					css('top', offset.top + target.outerHeight()).
-					toggle();
+				target.find('.bookmark_popup').css('left', offset.left).
+					css('top', offset.top + target.outerHeight()).toggle();
 				return false;
 			});
 			$(document).click(function(event) { // Close on external click
-				$('.bookmark_popup', target).hide();
+				target.find('.bookmark_popup').hide();
 			});
 		}
 	},
@@ -525,6 +592,25 @@ $.extend(Bookmark.prototype, {
 		}
 		target.removeClass(this.markerClassName).empty();
 		$.removeData(target[0], PROP_NAME);
+	},
+
+	/* Callback when selected.
+	   @param  id      (string) the target ID
+	   @param  siteID  (string) the selected site ID */
+	_selected: function(id, siteID) {
+		var target = $('#' + id)[0];
+		var settings = $.data(target, PROP_NAME);
+		var site = $.bookmark._sites[siteID];
+		var url = settings.url || window.location.href;
+		var sourceTag = (!settings.sourceTag ? '' :
+			encodeURIComponent((url.indexOf('?') > -1 ? '&' : '?') + settings.sourceTag + '='));
+		var url = encodeURIComponent(url);
+		var title = encodeURIComponent(settings.title || document.title);
+		var desc = encodeURIComponent(settings.description || '');
+		settings.onSelect.apply(target, [siteID, site.display,
+			site.url.replace(/\{u\}/, url + (sourceTag ? sourceTag + siteID : '')).
+			replace(/\{t\}/, title).replace(/\{d\}/, desc)]);
+		return false;
 	},
 
 	/* Add the current page as a favourite in the browser.
