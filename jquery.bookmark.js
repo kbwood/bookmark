@@ -1,6 +1,6 @@
 ﻿/* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.1.1.
-   Written by Keith Wood (kbwood@virginbroadband.com.au) March 2008.
+   Sharing bookmarks for jQuery v1.1.2.
+   Written by Keith Wood (kbwood{at}iinet.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
    Please attribute the author if you use it. */
@@ -17,11 +17,14 @@ var PROP_NAME = 'bookmark';
 /* Bookmark sharing manager. */
 function Bookmark() {
 	this._defaults = {
+		url: '',  // The URL to bookmark, leave blank for the current page
+		title: '',  // The title to bookmark, leave blank for the current one
 		sites: [],  // List of site IDs to use, empty for all
 		icons: 'bookmarks.png', // Horizontal amalgamation of all site icons
 		iconSize: 16,  // The size of the individual icons
 		target: '_blank',  // The name of the target window for the bookmarking links
 		compact: true,  // True if a compact presentation should be used, false for full
+		hint: 'Send to {s}',  // Popup hint for links, {s} is replaced by display name
 		popup: false, // True to have it popup on demand, false to show always
 		popupText: 'Bookmark this site...', // Text for the popup trigger
 		addFavorite: false,  // True to add a 'add to favourites' link, false for none
@@ -52,9 +55,11 @@ function Bookmark() {
 		'blinklist': {display: 'BlinkList', icon: 4,
 			url: 'http://www.blinklist.com/index.php?Action=Blink/addblink.php&amp;Url={u}&amp;Title={t}'},
 		'bloglines': {display: 'Bloglines', icon: 48,
-			url: 'http://www.bloglines.com/citations?url={u}'},
+			url: 'http://www.bloglines.com/sub/{u}'},
 		'blogmarks': {display: 'Blogmarks', icon: 5,
 			url: 'http://blogmarks.net/my/new.php?mini=1&amp;simple=1&amp;url={u}&amp;title={t}'},
+		'bookmarkit': {display: 'bookmark.it', icon: 71,
+			url: 'http://www.bookmark.it/bookmark.php?url={u}'},
 		'care2': {display: 'Care2', icon: 6,
 			url: 'http://www.care2.com/news/news_post.html?url={u}&amp;title={t}'},
 		'current': {display: 'Current', icon: 49,
@@ -82,9 +87,9 @@ function Bookmark() {
 		'friendfeed': {display: 'FriendFeed', icon: 52,
 			url: 'http://friendfeed.com/share?url={u}&amp;title={t}'},
 		'funp': {display: 'funP', icon: 53,
-			url: 'http://funp.com/pages/submit/add.php?title={t}&amp;url={u}'},
+			url: 'http://funp.com/pages/submit/add.php?url={u}&amp;title={t}'},
 		'furl': {display: 'Furl', icon: 15,
-			url: 'http://www.furl.net/storeIt.jsp?t={t}&amp;u={u}'},
+			url: 'http://www.furl.net/storeIt.jsp?u={u}&amp;t={t}'},
 		'google': {display: 'Google', icon: 16,
 			url: 'http://www.google.com/bookmarks/mark?op=edit&amp;bkmk={u}&amp;title={t}'},
 		'hugg': {display: 'Hugg', icon: 17,
@@ -129,6 +134,8 @@ function Bookmark() {
 			url: 'http://view.nowpublic.com/?src={u}&amp;t={t}'},
 		'oknotizie': {display: 'OKNOtizie', icon: 57,
 			url: 'http://oknotizie.alice.it/post?url={u}&amp;title={t}'},
+		'oneview': {display: 'OneView', icon: 72,
+			url: 'http://www.oneview.de/quickadd/neu/addBookmark.jsf?URL={u}&amp;title={t}'},
 		'propeller': {display: 'Propeller', icon: 58,
 			url: 'http://www.propeller.com/submit/?U={u}&amp;T={t}'},
 		'reddit': {display: 'reddit', icon: 30,
@@ -152,7 +159,7 @@ function Bookmark() {
 		'stumbleupon': {display: 'StumbleUpon', icon: 36,
 			url: 'http://www.stumbleupon.com/submit?url={u}&amp;title={t}'},
 		'tailrank': {display: 'Tailrank', icon: 37,
-			url: 'http://tailrank.com/share/?title={t}&amp;link_href={u}'},
+			url: 'http://tailrank.com/share/?link_href={u}&amp;title={t}'},
 		'technorati': {display: 'Technorati', icon: 38,
 			url: 'http://www.technorati.com/faves?add={u}'},
 		'thisnext': {display: 'ThisNext', icon: 39,
@@ -164,13 +171,13 @@ function Bookmark() {
 		'windows': {display: 'Windows Live', icon: 40,
 			url: 'https://favorites.live.com/quickadd.aspx?marklet=1&amp;mkt=en-us&amp;url={u}&amp;title={t}'},
 		'xanga': {display: 'Xanga', icon: 59,
-			url: 'http://www.xanga.com/private/editorx.aspx?t={t}&amp;u={u}'},
+			url: 'http://www.xanga.com/private/editorx.aspx?u={u}&amp;t={t}'},
 		'yahoobm': {display: 'Yahoo Bookmarks', icon: 60,
-			url: 'http://bookmarks.yahoo.com/toolbar/savebm?opener=tb&amp;u={u}&t={t}'},
+			url: 'http://bookmarks.yahoo.com/toolbar/savebm?opener=tb&amp;u={u}&amp;t={t}'},
 		'yahoobuzz': {display: 'Yahoo Buzz', icon: 67,
 			url: 'http://buzz.yahoo.com/submit?submitUrl={u}&amp;submitHeadline={t}'},
 		'yahoo': {display: 'Yahoo MyWeb', icon: 41,
-			url: 'http://myweb2.search.yahoo.com/myresults/bookmarklet?t={t}&amp;u={u}'},
+			url: 'http://myweb2.search.yahoo.com/myresults/bookmarklet?u={u}&amp;t={t}'},
 		'yardbarker': {display: 'Yardbarker', icon: 68,
 			url: 'http://www.yardbarker.com/author/new/?pUrl={u}'},
 		'yigg': {display: 'Yigg', icon: 61,
@@ -244,6 +251,7 @@ $.extend(Bookmark.prototype, {
 				sites.push(id);
 			});
 		}
+		var hint = settings.hint || '{s}';
 		var html = (settings.popup ? '<span class="bookmark_popup_text">' +
 			settings.popupText + '</span><div class="bookmark_popup">' : '') +
 			'<ul class="bookmark_list' + (settings.compact ? ' bookmark_compact' : '') + '">';
@@ -251,8 +259,9 @@ $.extend(Bookmark.prototype, {
 			var html = '<li><a href="' + url + '"' + (onclick ? ' onclick="' + onclick + '"' :
 				(settings.target ? ' target="' + settings.target + '"' : '')) + '>';
 			if (icon != null) {
+				var title = hint.replace(/\{s\}/, display);
 				if (typeof icon == 'number') {
-					html += '<span title="' + display + '" style="background: ' +
+					html += '<span title="' + title + '" style="background: ' +
 						'transparent url(' + settings.icons + ') no-repeat -' +
 						(icon * settings.iconSize) + 'px 0px;' +
 						($.browser.mozilla && $.browser.version < '1.9' ?
@@ -260,8 +269,8 @@ $.extend(Bookmark.prototype, {
 						Math.max(0, (settings.iconSize / 2) - 5) + 'px;' : '') + '"></span>';
 				}
 				else {
-					html += '<img src="' + icon + '" alt="' + display + '" title="' +
-						display + '"' + (($.browser.mozilla && $.browser.version < '1.9') ||
+					html += '<img src="' + icon + '" alt="' + title + '" title="' +
+						title + '"' + (($.browser.mozilla && $.browser.version < '1.9') ||
 						($.browser.msie && $.browser.version < '7.0') ?
 						' style="vertical-align: bottom;"' :
 						($.browser.msie ? ' style="vertical-align: middle;"' :
@@ -273,23 +282,26 @@ $.extend(Bookmark.prototype, {
 			html +=	(settings.compact ? '' : display) + '</a></li>';
 			return html;
 		};
+		var url = settings.url || window.location.href;
+		var title = settings.title || document.title;
 		if (settings.addFavorite) {
 			html += addSite(settings.favoriteText, settings.favoriteIcon,
-				'#', 'jQuery.bookmark._addFavourite()');
+				'#', 'jQuery.bookmark._addFavourite(\'' + url + '\',\'' + title + '\')');
 		}
 		if (settings.addEmail) {
 			html += addSite(settings.emailText, settings.emailIcon,
-				'mailto:?subject=' + escape(settings.emailSubject) + '&amp;body=' +
-				escape(settings.emailBody.replace(/{u}/, window.location.href).
-				replace(/{t}/, document.title)));
+				'mailto:?subject=' + encodeURIComponent(settings.emailSubject) +
+				'&amp;body=' + encodeURIComponent(settings.emailBody.
+				replace(/{u}/, url).replace(/{t}/, title)));
 		}
+		url = encodeURIComponent(url);
+		title = encodeURIComponent(title);
 		var allSites = this._sites;
 		$.each(sites, function(index, id) {
 			var site = allSites[id];
 			if (site) {
 				html += addSite(site.display, site.icon,
-					site.url.replace(/{u}/, escape(window.location.href)).
-					replace(/{t}/, escape(document.title)));
+					site.url.replace(/{u}/, url).replace(/{t}/, title));
 			}
 		});
 		html += '</ul>' + (settings.popup ? '</div>' : '');
@@ -311,7 +323,7 @@ $.extend(Bookmark.prototype, {
 	   @return  (number[2]) the horizontal and vertical sizes */
 	_getExtras: function(elem) {
 		var convert = function(value) {
-			return {thin: 1, medium: 2, thick: 3}[value] || value;
+			return {thin: 1, medium: 3, thick: 5}[value] || value;
 		};
 		return [parseInt(convert(elem.css('border-left-width')), 10) +
 			parseInt(convert(elem.css('border-right-width')), 10) +
@@ -331,10 +343,12 @@ $.extend(Bookmark.prototype, {
 		$.removeData(target[0], PROP_NAME);
 	},
 
-	/* Add the current page as a favourite in the browser. */
-	_addFavourite: function() {
+	/* Add the current page as a favourite in the browser.
+	   @param  url    (string) the URL to bookmark
+	   @param  title  (string) the title to bookmark */
+	_addFavourite: function(url, title) {
 		if ($.browser.msie) {
-			window.external.addFavorite(window.location.href, document.title);
+			window.external.addFavorite(url, title);
 		}
 		else {
 			alert(this._defaults.manualBookmark);
