@@ -1,4 +1,19 @@
 /* jQuery Bookmark styles */
+.bookmark_popup_text {
+	cursor: pointer;
+	color: blue;
+	text-decoration: underline;
+}
+.bookmark_popup {
+	display: none;
+	position: absolute;
+	z-index: 100;
+}
+.bookmark_popup ul {
+	float: left;
+	width: 200px;
+	border: 1px solid #aaa;
+}
 .bookmark_list {
 	display: block;
 	list-style-type: none;
@@ -17,8 +32,8 @@ html:first-child .bookmark_list {  /* Opera */
 .bookmark_list li {
 	float: left;
 	width: 23%;
-	margin: 0% 0.5%;
-	padding: 2px;
+	margin: 0px 1px;
+	padding: 1px;
 	background-color: #eee;
 	border: 1px outset;
 }
@@ -29,7 +44,8 @@ html:first-child .bookmark_list {  /* Opera */
 .bookmark_compact li {
 	width: 16px;
 	height: 16px;
-	margin: 0%;
+	margin: 0px;
+	padding: 2px;
 	background-color: transparent;
 	border: none;
 }

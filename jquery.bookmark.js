@@ -1,5 +1,5 @@
-/* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.0.3.
+﻿/* http://keith-wood.name/bookmark.html
+   Sharing bookmarks for jQuery v1.1.0.
    Written by Keith Wood (kbwood@virginbroadband.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
@@ -19,7 +19,9 @@ function Bookmark() {
 		icons: 'bookmarks.png', // Horizontal amalgamation of all site icons
 		iconSize: 16,  // The size of the individual icons
 		target: '_blank',  // The name of the target window for the bookmarking links
-		compact: false,  // True if a compact presentation should be used, false for full
+		compact: true,  // True if a compact presentation should be used, false for full
+		popup: false, // True to have it popup on demand, false to show always
+		popupText: 'Bookmark this site...', // Text for the popup trigger
 		addFavorite: false,  // True to add a 'add to favourites' link, false for none
 		favoriteText: 'Favorite',  // Display name for the favourites link
 		favoriteIcon: 0,  // Icon for the favourites link
@@ -37,14 +39,26 @@ function Bookmark() {
 			url: 'http://favorites.my.aol.com/ffclient/webroot/0.4.1/src/html/addBookmarkDialog.html?url={u}&amp;title={t}&amp;favelet=true'},
 		'ask': {display: 'Ask', icon: 3,
 			url: 'http://myjeeves.ask.com/mysearch/BookmarkIt?v=1.2&amp;t=webpages&amp;url={u}&amp;title={t}'},
+		'backflip': {display: 'Backflip', icon: 62,
+			url: 'http://www.backflip.com/add_page_pop.ihtml?url={u}&amp;title={t}'},
+		'ballhype': {display: 'BallHype', icon: 63,
+			url: 'http://ballhype.com/post/url/?url={u}&amp;title={t}'},
+		'bebo': {display: 'Bebo', icon: 64,
+			url: 'http://bebo.com/c/share?Url={u}&amp;Title={t}'},
 		'blinklist': {display: 'BlinkList', icon: 4,
 			url: 'http://www.blinklist.com/index.php?Action=Blink/addblink.php&amp;Url={u}&amp;Title={t}'},
+		'bloglines': {display: 'Bloglines', icon: 48,
+			url: 'http://www.bloglines.com/citations?url={u}'},
 		'blogmarks': {display: 'Blogmarks', icon: 5,
 			url: 'http://blogmarks.net/my/new.php?mini=1&amp;simple=1&amp;url={u}&amp;title={t}'},
 		'care2': {display: 'Care2', icon: 6,
 			url: 'http://www.care2.com/news/news_post.html?url={u}&amp;title={t}'},
+		'current': {display: 'Current', icon: 49,
+			url: 'http://current.com/clipper.htm?url={u}&amp;title={t}'},
 		'delicious': {display: 'del.icio.us', icon: 7,
 			url: 'http://del.icio.us/post?url={u}&amp;title={t}'},
+//		'designfloat': {display: 'DesignFloat', icon: 50,
+//			url: 'http://www.designfloat.com/submit.php?url={u}'},
 		'digg': {display: 'Digg', icon: 8,
 			url: 'http://digg.com/submit?phase=2&amp;url={u}&amp;title={t}'},
 		'diigo': {display: 'Diigo', icon: 9,
@@ -59,20 +73,34 @@ function Bookmark() {
 			url: 'http://faves.com/Authoring.aspx?u={u}&amp;t={t}'},
 		'feedmelinks': {display: 'Feed Me Links', icon: 14,
 			url: 'http://feedmelinks.com/categorize?from=toolbar&amp;op=submit&amp;url={u}&amp;name={t}'},
+		'fresqui': {display: 'Fresqui', icon: 51,
+			url: 'http://ocio.fresqui.com/post?url={u}&amp;title={t}'},
+		'friendfeed': {display: 'FriendFeed', icon: 52,
+			url: 'http://friendfeed.com/share?url={u}&amp;title={t}'},
+		'funp': {display: 'funP', icon: 53,
+			url: 'http://funp.com/pages/submit/add.php?title={t}&amp;url={u}'},
 		'furl': {display: 'Furl', icon: 15,
 			url: 'http://www.furl.net/storeIt.jsp?t={t}&amp;u={u}'},
 		'google': {display: 'Google', icon: 16,
 			url: 'http://www.google.com/bookmarks/mark?op=edit&amp;bkmk={u}&amp;title={t}'},
 		'hugg': {display: 'Hugg', icon: 17,
 			url: 'http://www.hugg.com/submit?url={u}'},
+		'kaboodle': {display: 'Kaboodle', icon: 65,
+			url: 'http://www.kaboodle.com/grab/addItemWithUrl?url={u}&amp;pidOrRid=pid=&amp;redirectToKPage=true'},
+		'kirtsy': {display: 'Kirtsy', icon: 54,
+			url: 'http://www.kirtsy.com/submit.php?url={u}'},
 		'kool': {display: 'Koolontheweb', icon: 43,
 			url: 'http://www.koolontheweb.com/post?url={u}&title={t}'},
 		'linkagogo': {display: 'LinkaGoGo', icon: 18,
 			url: 'http://www.linkagogo.com/go/AddNoPopup?url={u}&amp;title={t}'},
+		'linkedin': {display: 'LinkedIn', icon: 66,
+			url: 'http://www.linkedin.com/shareArticle?mini=true&amp;url={u}&amp;title={t}&amp;ro=false&amp;summary=&amp;source='},
 		'livejournal': {display: 'LiveJournal', icon: 19,
 			url: 'http://www.livejournal.com/update.bml?subject={u}'},
 		'magnolia': {display: 'ma.gnolia', icon: 20,
 			url: 'http://ma.gnolia.com/bookmarklet/add?url={u}&amp;title={t}'},
+		'meneame': {display: 'menéame', icon: 55,
+			url: 'http://meneame.net/submit.php?url={u}'},
 		'mindbody': {display: 'MindBodyGreen', icon: 21,
 			url: 'http://www.mindbodygreen.com/passvote.action?u={u}'},
 		'misterwong': {display: 'Mister Wong', icon: 22,
@@ -83,6 +111,8 @@ function Bookmark() {
 			url: 'http://multiply.com/gus/journal/compose/addthis?body=&amp;url={u}&amp;subject={t}'},
 		'myspace': {display: 'MySpace', icon: 25,
 			url: 'http://www.myspace.com/Modules/PostTo/Pages/?c={u}&amp;t={t}'},
+		'n4g': {display: 'N4G', icon: 56,
+			url: 'http://www.n4g.com/tips.aspx?url={u}&amp;title={t}'},
 		'netscape': {display: 'Netscape', icon: 26,
 			url: 'http://www.netscape.com/submit/?U={u}&amp;T={t}'},
 		'netvouz': {display: 'Netvouz', icon: 27,
@@ -91,8 +121,14 @@ function Bookmark() {
 			url: 'http://www.newsvine.com/_wine/save?u={u}&amp;h={t}'},
 		'nowpublic': {display: 'NowPublic', icon: 29,
 			url: 'http://view.nowpublic.com/?src={u}&amp;t={t}'},
+		'oknotizie': {display: 'OKNOtizie', icon: 57,
+			url: 'http://oknotizie.alice.it/post?url={u}&amp;title={t}'},
+		'propeller': {display: 'Propeller', icon: 58,
+			url: 'http://www.propeller.com/submit/?U={u}&amp;T={t}'},
 		'reddit': {display: 'reddit', icon: 30,
 			url: 'http://reddit.com/submit?url={u}&amp;title={t}'},
+		'scoopeo': {display: 'Scoopeo', icon: 46,
+			url: 'http://www.scoopeo.com/scoop/new?newurl={u}&amp;title={t}'},
 		'segnalo': {display: 'Segnalo', icon: 31,
 			url: 'http://segnalo.alice.it/post.html.php?url={u}&amp;title={t}'},
 		'simpy': {display: 'Simpy', icon: 32,
@@ -117,10 +153,22 @@ function Bookmark() {
 			url: 'http://www.thisnext.com/pick/new/submit/sociable/?url={u}&amp;name={t}'},
 		'twitthis': {display: 'TwitThis', icon: 45,
 			url: 'http://twitthis.com/twit?url={u}'},
+		'wikio': {display: 'Wikio', icon: 47,
+			url: 'http://www.wikio.com/vote?newurl={u}'},
 		'windows': {display: 'Windows Live', icon: 40,
 			url: 'https://favorites.live.com/quickadd.aspx?marklet=1&amp;mkt=en-us&amp;url={u}&amp;title={t}'},
+		'xanga': {display: 'Xanga', icon: 59,
+			url: 'http://www.xanga.com/private/editorx.aspx?t={t}&amp;u={u}'},
+		'yahoobm': {display: 'Yahoo Bookmarks', icon: 60,
+			url: 'http://bookmarks.yahoo.com/toolbar/savebm?opener=tb&amp;u={u}&t={t}'},
+		'yahoobuzz': {display: 'Yahoo Buzz', icon: 67,
+			url: 'http://buzz.yahoo.com/submit?submitUrl={u}&amp;submitHeadline={t}'},
 		'yahoo': {display: 'Yahoo MyWeb', icon: 41,
-			url: 'http://myweb2.search.yahoo.com/myresults/bookmarklet?t={t}&amp;u={u}'}
+			url: 'http://myweb2.search.yahoo.com/myresults/bookmarklet?t={t}&amp;u={u}'},
+		'yardbarker': {display: 'Yardbarker', icon: 68,
+			url: 'http://www.yardbarker.com/author/new/?pUrl={u}'},
+		'yigg': {display: 'Yigg', icon: 61,
+			url: 'http://www.yigg.de/neu?exturl={u}&amp;exttitle={t}'}
 	};
 }
 
@@ -185,10 +233,12 @@ $.extend(Bookmark.prototype, {
 		var sites = settings.sites;
 		if (sites.length == 0) {
 			$.each(this._sites, function(id) {
-				sites[sites.length] = id;
+				sites.push(id);
 			});
 		}
-		var html = '<ul class="bookmark_list' + (settings.compact ? ' bookmark_compact' : '') + '">';
+		var html = (settings.popup ? '<span class="bookmark_popup_text">' +
+			settings.popupText + '</span><div class="bookmark_popup">' : '') +
+			'<ul class="bookmark_list' + (settings.compact ? ' bookmark_compact' : '') + '">';
 		var addSite = function(display, icon, url, onclick) {
 			var html = '<li><a href="' + url + '"' + (onclick ? ' onclick="' + onclick + '"' :
 				(settings.target ? ' target="' + settings.target + '"' : '')) + '>';
@@ -197,9 +247,9 @@ $.extend(Bookmark.prototype, {
 					html += '<span title="' + display + '" style="background: ' +
 						'transparent url(' + settings.icons + ') no-repeat -' +
 						(icon * settings.iconSize) + 'px 0px;' +
-						($.browser.mozilla && $.browser.version.substr(0, 3) != '1.9' ?
-						' padding-left: ' + settings.iconSize +
-						'px; padding-bottom: 3px;' : '') + '"></span>';
+						($.browser.mozilla && $.browser.version < '1.9' ?
+						' padding-left: ' + settings.iconSize + 'px; padding-bottom: ' +
+						Math.max(0, (settings.iconSize / 2) - 5) + 'px;' : '') + '"></span>';
 				}
 				else {
 					html += '<img src="' + icon + '" alt="' + display + '" title="' +
@@ -234,8 +284,33 @@ $.extend(Bookmark.prototype, {
 					replace(/{t}/, escape(document.title)));
 			}
 		});
-		html += '</ul>';
+		html += '</ul>' + (settings.popup ? '</div>' : '');
 		target.html(html);
+		if (settings.popup) {
+			$(target).click(function() {
+				var target = $(this);
+				var offset = target.offset();
+				var extras = $.bookmark._getExtras(target);
+				$('.bookmark_popup', target).css('left', offset.left).
+					css('top', offset.top + target.height() + extras[1]).
+					toggle();
+			});
+		}
+	},
+
+	/* Retrieve the size of borders and padding for an element.
+	   @param  elem  (jQuery object) the element of interest
+	   @return  (number[2]) the horizontal and vertical sizes */
+	_getExtras: function(elem) {
+		var convert = function(value) {
+			return {thin: 1, medium: 2, thick: 3}[value] || value;
+		};
+		return [parseInt(convert(elem.css('border-left-width'))) +
+			parseInt(convert(elem.css('border-right-width'))) +
+			parseInt(elem.css('padding-left')) + parseInt(elem.css('padding-right')),
+			parseInt(convert(elem.css('border-top-width'))) +
+			parseInt(convert(elem.css('border-bottom-width'))) +
+			parseInt(elem.css('padding-top')) + parseInt(elem.css('padding-bottom'))];
 	},
 
 	/* Remove the bookmarking widget from a div. */
