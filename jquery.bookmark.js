@@ -1,5 +1,5 @@
 /* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.0.2.
+   Sharing bookmarks for jQuery v1.0.3.
    Written by Keith Wood (kbwood@virginbroadband.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
@@ -101,6 +101,8 @@ function Bookmark() {
 			url: 'http://slashdot.org/bookmark.pl?url={u}&amp;title={t}'},
 		'smarking': {display: 'Smarking', icon: 34,
 			url: 'http://smarking.com/editbookmark/?url={u}&amp;title={t}'},
+		'sphinn': {display: 'Sphinn', icon: 44,
+			url: 'http://sphinn.com/submit.php?url={u}&amp;title={t}'},
 		'spurl': {display: 'Spurl', icon: 35,
 			url: 'http://www.spurl.net/spurl.php?url={u}&amp;title={t}'},
 		'squidoo': {display: 'Squidoo', icon: 42,
@@ -113,6 +115,8 @@ function Bookmark() {
 			url: 'http://www.technorati.com/faves?add={u}'},
 		'thisnext': {display: 'ThisNext', icon: 39,
 			url: 'http://www.thisnext.com/pick/new/submit/sociable/?url={u}&amp;name={t}'},
+		'twitthis': {display: 'TwitThis', icon: 45,
+			url: 'http://twitthis.com/twit?url={u}'},
 		'windows': {display: 'Windows Live', icon: 40,
 			url: 'https://favorites.live.com/quickadd.aspx?marklet=1&amp;mkt=en-us&amp;url={u}&amp;title={t}'},
 		'yahoo': {display: 'Yahoo MyWeb', icon: 41,
@@ -151,7 +155,7 @@ $.extend(Bookmark.prototype, {
 	            display (string) - the display name,
 	            icon    (string) - the location of the icon,, or
 	                    (number) the icon's index in the combined image
-	            url (string) - the submission URL for the site */
+	            url     (string) - the submission URL for the site */
 	getSites: function() {
 		return this._sites;
 	},
@@ -199,8 +203,12 @@ $.extend(Bookmark.prototype, {
 				}
 				else {
 					html += '<img src="' + icon + '" alt="' + display + '" title="' +
-						display + '"' + ($.browser.mozilla || $.browser.opera ?
-						' style="vertical-align: baseline;"' : '') + '/>';
+						display + '"' + (($.browser.mozilla && $.browser.version < '1.9') ||
+						($.browser.msie && $.browser.version < '7.0') ?
+						' style="vertical-align: bottom;"' :
+						($.browser.msie ? ' style="vertical-align: middle;"' :
+						($.browser.opera || $.browser.safari ?
+						' style="vertical-align: baseline;"' : ''))) + '/>';
 				}
 				html +=	(settings.compact ? '' : '&#xa0;');
 			}
@@ -220,8 +228,11 @@ $.extend(Bookmark.prototype, {
 		var allSites = this._sites;
 		$.each(sites, function(index, id) {
 			var site = allSites[id];
-			html += addSite(site.display, site.icon, site.url.
-				replace(/{u}/, escape(window.location.href)).replace(/{t}/, escape(document.title)));
+			if (site) {
+				html += addSite(site.display, site.icon,
+					site.url.replace(/{u}/, escape(window.location.href)).
+					replace(/{t}/, escape(document.title)));
+			}
 		});
 		html += '</ul>';
 		target.html(html);

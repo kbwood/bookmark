@@ -43,15 +43,4 @@ html:first-child .bookmark_list {  /* Opera */
 }
 .bookmark_list img {
 	border: none;
-	vertical-align: bottom;
-}
-@media screen and (-webkit-min-device-pixel-ratio:0) {  /* Safari3/Opera9 */
-	.bookmark_list img {
-		margin-bottom: 3px;
-		vertical-align: middle;
-	}
-}
-html:first-child .bookmark_list img { /* Opera */
-	margin-bottom: 3px;
-	vertical-align: middle;
 }
