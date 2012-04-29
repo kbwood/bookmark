@@ -1,5 +1,5 @@
 ﻿/* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.1.3.
+   Sharing bookmarks for jQuery v1.1.4.
    Written by Keith Wood (kbwood{at}iinet.com.au) March 2008.
    Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
    MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
@@ -46,7 +46,7 @@ function Bookmark() {
 		'allvoices': {display: 'Allvoices', icon: 75,
 			url: 'http://www.allvoices.com/post_event?url={u}&amp;title={t}'},
 		'aol': {display: 'myAOL', icon: 2,
-			url: 'http://favorites.my.aol.com/ffclient/webroot/0.4.1/src/html/addBookmarkDialog.html?url={u}&amp;title={t}&amp;favelet=true'},
+			url: 'http://favorites.my.aol.com/ffclient/AddBookmark?url={u}&amp;title={t}'},
 		'arto': {display: 'Arto', icon: 76,
 			url: 'http://www.arto.com/section/linkshare/?lu={u}&amp;ln={t}'},
 		'ask': {display: 'Ask', icon: 3,
@@ -61,8 +61,6 @@ function Bookmark() {
 			url: 'http://www.bibsonomy.org/BibtexHandler?requTask=upload&amp;url={u}&amp;description={t}'},
 		'blinklist': {display: 'BlinkList', icon: 4,
 			url: 'http://www.blinklist.com/index.php?Action=Blink/addblink.php&amp;Url={u}&amp;Title={t}'},
-		'bloglines': {display: 'Bloglines', icon: 48,
-			url: 'http://www.bloglines.com/sub/{u}'},
 		'blogmarks': {display: 'Blogmarks', icon: 5,
 			url: 'http://blogmarks.net/my/new.php?mini=1&amp;simple=1&amp;url={u}&amp;title={t}'},
 		'bookmarkit': {display: 'bookmark.it', icon: 71,
@@ -105,8 +103,6 @@ function Bookmark() {
 			url: 'http://cgi.fark.com/cgi/fark/submit.pl?new_url={u}&amp;new_comment={t}'},
 		'faves': {display: 'Faves', icon: 13,
 			url: 'http://faves.com/Authoring.aspx?u={u}&amp;t={t}'},
-		'feedmelinks': {display: 'Feed Me Links', icon: 14,
-			url: 'http://feedmelinks.com/categorize?from=toolbar&amp;op=submit&amp;url={u}&amp;name={t}'},
 		'folkd': {display: 'Folkd', icon: 85,
 			url: 'http://www.folkd.com/submit/{u}'},
 		'foxiewire': {display: 'FoxieWire', icon: 86,
@@ -117,8 +113,6 @@ function Bookmark() {
 			url: 'http://friendfeed.com/share?url={u}&amp;title={t}'},
 		'funp': {display: 'funP', icon: 53,
 			url: 'http://funp.com/pages/submit/add.php?url={u}&amp;title={t}'},
-		'furl': {display: 'Furl', icon: 15,
-			url: 'http://www.furl.net/storeIt.jsp?u={u}&amp;t={t}'},
 		'gabbr': {display: 'Gabbr', icon: 87,
 			url: 'http://www.gabbr.com/submit/?bookurl={u}'},
 		'globalgrind': {display: 'Global Grind', icon: 88,
@@ -161,8 +155,6 @@ function Bookmark() {
 			url: 'http://www.linkedin.com/shareArticle?mini=true&amp;url={u}&amp;title={t}&amp;ro=false&amp;summary=&amp;source='},
 		'livejournal': {display: 'LiveJournal', icon: 19,
 			url: 'http://www.livejournal.com/update.bml?subject={u}'},
-		'magnolia': {display: 'ma.gnolia', icon: 20,
-			url: 'http://ma.gnolia.com/bookmarklet/add?url={u}&amp;title={t}'},
 		'maple': {display: 'Maple', icon: 99,
 			url: 'http://www.maple.nu/bookmarks/bookmarklet?bookmark[url]={u}&amp;bookmark[description]={t}'},
 		'meneame': {display: 'menéame', icon: 55,
@@ -225,8 +217,6 @@ function Bookmark() {
 			url: 'http://slashdot.org/bookmark.pl?url={u}&amp;title={t}'},
 		'smaknews': {display: 'SmakNews', icon: 110,
 			url: 'http://smaknews.com/submit.php?url={u}&amp;title={t}'},
-		'smarking': {display: 'Smarking', icon: 34,
-			url: 'http://smarking.com/editbookmark/?url={u}&amp;title={t}'},
 		'sphinn': {display: 'Sphinn', icon: 44,
 			url: 'http://sphinn.com/submit.php?url={u}&amp;title={t}'},
 		'spurl': {display: 'Spurl', icon: 35,
@@ -241,12 +231,8 @@ function Bookmark() {
 			url: 'http://www.stumbleupon.com/submit?url={u}&amp;title={t}'},
 		'stumpedia': {display: 'Stumpedia', icon: 113,
 			url: 'http://www.stumpedia.com/submit?url={u}&amp;title={t}'},
-		'symbaloo': {display: 'Symbaloo', icon: 114,
-			url: 'http://www.symbaloo.com/us/add/url={u}&amp;title={t}'},
 		'tagza': {display: 'Tagza', icon: 115,
 			url: 'http://www.tagza.com/submit.php?url={u}'},
-		'tailrank': {display: 'Tailrank', icon: 37,
-			url: 'http://tailrank.com/share/?link_href={u}&amp;title={t}'},
 		'technet': {display: 'TechNet', icon: 116,
 			url: 'http://social.technet.microsoft.com/en-US/action/Create/s/E/?url={u}&amp;bm=true&amp;ttl={t}'},
 		'technorati': {display: 'Technorati', icon: 38,
