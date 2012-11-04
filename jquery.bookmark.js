@@ -181,7 +181,7 @@ $.extend(Bookmark.prototype, {
 		if (!target.hasClass(this.markerClassName)) {
 			return;
 		}
-		if (typeof settings == 'string') {
+		if (typeof settings === 'string') {
 			var name = settings;
 			settings = {};
 			settings[name] = value;
@@ -197,7 +197,7 @@ $.extend(Bookmark.prototype, {
 		settings = extendRemove(oldSettings, settings || {});
 		$.data(target[0], PROP_NAME, settings);
 		var sites = settings.sites;
-		if (sites.length == 0) { // All sites
+		if (sites.length === 0) { // All sites
 			$.each($.bookmark._sites, function(id) {
 				sites.push(id);
 			});
@@ -208,7 +208,7 @@ $.extend(Bookmark.prototype, {
 				var lang = value.match(/lang:(.*)/); // Select by language
 				if (lang) {
 					$.each($.bookmark._sites, function(id, site) {
-						if (site.lang == lang[1] && $.inArray(id, sites) == -1) {
+						if (site.lang === lang[1] && $.inArray(id, sites) === -1) {
 							sites.push(id);
 						}
 					});
@@ -216,7 +216,7 @@ $.extend(Bookmark.prototype, {
 				var category = value.match(/category:(.*)/); // Select by category
 				if (category) {
 					$.each($.bookmark._sites, function(id, site) {
-						if (site.category == category[1] && $.inArray(id, sites) == -1) {
+						if (site.category === category[1] && $.inArray(id, sites) === -1) {
 							sites.push(id);
 						}
 					});
@@ -314,9 +314,9 @@ $.extend(Bookmark.prototype, {
 		var hintFormat = settings.hint || '{s}';
 		var html = '<li><a href="' + url + '"' +
 			(settings.target ? ' target="' + settings.target + '"' : '') + '>';
-		if (icon != null) {
+		if (icon !== null) {
 			var title = hint || hintFormat.replace(/\{s\}/, display);
-			if (typeof icon == 'number') {
+			if (typeof icon === 'number') {
 				html += '<span title="' + title + '" ' +
 					(settings.iconsStyle ? 'class="' + settings.iconsStyle + '" ' : '') +
 					'style="' + (settings.iconsStyle ? 'background-position: ' :
@@ -399,7 +399,7 @@ $.extend(Bookmark.prototype, {
 			append(list).appendTo('body');
 		all.css({left: ($(window).width() - all.width()) / 2, top: ($(window).height() - all.height()) / 2}).show();
 		$(document).bind('click.bookmark', function(event) {
-			if ($(event.target).closest(elem).length == 0 && $(event.target).closest('#bookmark_all').length == 0) {
+			if ($(event.target).closest(elem).length === 0 && $(event.target).closest('#bookmark_all').length === 0) {
 				$('#bookmark_all').remove();
 				$(document).unbind('click.bookmark');
 			}
@@ -425,7 +425,7 @@ $.extend(Bookmark.prototype, {
 function extendRemove(target, props) {
 	$.extend(target, props);
 	for (var name in props) {
-		if (props[name] == null) {
+		if (props[name] === null) {
 			target[name] = null;
 		}
 	}
@@ -439,7 +439,7 @@ function extendRemove(target, props) {
 $.fn.bookmark = function(options) {
 	var otherArgs = Array.prototype.slice.call(arguments, 1);
 	return this.each(function() {
-		if (typeof options == 'string') {
+		if (typeof options === 'string') {
 			if (!$.bookmark['_' + options + 'Bookmark']) {
 				throw 'Unknown operation: ' + options;
 			}
