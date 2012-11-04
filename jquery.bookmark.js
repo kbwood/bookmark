@@ -1,13 +1,13 @@
 ﻿/* http://keith-wood.name/bookmark.html
-   Sharing bookmarks for jQuery v1.4.0.
-   Written by Keith Wood (kbwood{at}iinet.com.au) March 2008.
-   Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
-   MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
-   Please attribute the author if you use it. */
-
+	Sharing bookmarks for jQuery v1.4.0.
+	Written by Keith Wood (kbwood{at}iinet.com.au) March 2008.
+	Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
+	MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
+	Please attribute the author if you use it. */
+/*jshint devel:true, forin:false */
 /* Allow your page to be shared with various bookmarking sites.
-   Attach the functionality with options like:
-   $('div selector').bookmark({sites: ['delicious', 'digg']});
+	Attach the functionality with options like:
+	$('div selector').bookmark({sites: ['delicious', 'digg']});
 */
 
 (function($) { // Hide scope, no $ conflict
@@ -17,28 +17,28 @@ var PROP_NAME = 'bookmark';
 /* Bookmark sharing manager. */
 function Bookmark() {
 	this._defaults = {
-		url: '',  // The URL to bookmark, leave blank for the current page
+		url: '',	// The URL to bookmark, leave blank for the current page
 		sourceTag: '', // Extra tag to add to URL to indicate source when it returns
-		title: '',  // The title to bookmark, leave blank for the current one
-		description: '',  // A longer description of the site
-		sites: [],  // List of site IDs or language selectors (lang:xx) or
+		title: '',	// The title to bookmark, leave blank for the current one
+		description: '',	// A longer description of the site
+		sites: [],	// List of site IDs or language selectors (lang:xx) or
 			// category selectors (category:xx) to use, empty for all
 		iconsStyle: 'bookmark_icons', // CSS class for site icons
 		icons: 'bookmarks.png', // Horizontal amalgamation of all site icons
-		iconSize: 16,  // The size of the individual icons
-		iconCols: 16,  // The number of icons across the combined image
-		target: '_blank',  // The name of the target window for the bookmarking links
-		compact: true,  // True if a compact presentation should be used, false for full
-		hint: 'Send to {s}',  // Popup hint for links, {s} is replaced by display name
+		iconSize: 16,	// The size of the individual icons
+		iconCols: 16,	// The number of icons across the combined image
+		target: '_blank',	// The name of the target window for the bookmarking links
+		compact: true,	// True if a compact presentation should be used, false for full
+		hint: 'Send to {s}',	// Popup hint for links, {s} is replaced by display name
 		popup: false, // True to have it popup on demand, false to show always
 		popupText: 'Bookmark this site...', // Text for the popup trigger
-		addFavorite: false,  // True to add a 'add to favourites' link, false for none
-		favoriteText: 'Favorite',  // Display name for the favourites link
-		favoriteIcon: 0,  // Icon for the favourites link
-		addEmail: false,  // True to add a 'e-mail a friend' link, false for none
-		emailText: 'E-mail',  // Display name for the e-mail link
-		emailIcon: 1,  // Icon for the e-mail link
-		emailSubject: 'Interesting page',  // The subject for the e-mail
+		addFavorite: false,	// True to add a 'add to favourites' link, false for none
+		favoriteText: 'Favorite',	// Display name for the favourites link
+		favoriteIcon: 0,	// Icon for the favourites link
+		addEmail: false,	// True to add a 'e-mail a friend' link, false for none
+		emailText: 'E-mail',	// Display name for the e-mail link
+		emailIcon: 1,	// Icon for the e-mail link
+		emailSubject: 'Interesting page',	// The subject for the e-mail
 		emailBody: 'I thought you might find this page interesting:\n{t} ({u})', // The body of the e-mail,
 			// use '{t}' for the position of the page title, '{u}' for the page URL,
 			// '{d}' for the description, and '\n' for new lines
@@ -55,7 +55,7 @@ function Bookmark() {
 			// '{u}' for the current full URL, '{r}' for the current relative URL,
 			// or '{t}' for the current title
 	};
-	this._sites = {  // The definitions of the available bookmarking sites, in URL use
+	this._sites = {	// The definitions of the available bookmarking sites, in URL use
 		// '{u}' for the page URL, '{t}' for the page title, and '{d}' for the description
 		'aol': {display: 'myAOL', icon: 3, lang: 'en', category: 'bookmark',
 			url: 'http://favorites.my.aol.com/ffclient/AddBookmark?url={u}&amp;title={t}'},
@@ -125,43 +125,43 @@ $.extend(Bookmark.prototype, {
 	markerClassName: 'hasBookmark',
 
 	/* Override the default settings for all bookmarking instances.
-	   @param  settings  (object) the new settings to use as defaults
-	   @return void */
+		@param	settings	(object) the new settings to use as defaults
+		@return void */
 	setDefaults: function(settings) {
 		extendRemove(this._defaults, settings || {});
 		return this;
 	},
 
 	/* Add a new bookmarking site to the list.
-	   @param  id        (string) the ID of the new site
-	   @param  display   (string) the display name for this site
-	   @param  icon      (string) the location (URL) of an icon for this site (16x16), or
-	                     (number) the index of the icon within the combined image
-	   @param  lang      (string) the language code for this site
-	   @param  category  (string) the category for this site
-	   @param  url       (string) the submission URL for this site,
-	                     with {u} marking where the current page's URL should be inserted,
-	                     and {t} indicating the title insertion point
-	   @return this singleton */
+		@param	id			(string) the ID of the new site
+		@param	display		(string) the display name for this site
+		@param	icon		(string) the location (URL) of an icon for this site (16x16), or
+							(number) the index of the icon within the combined image
+		@param	lang		(string) the language code for this site
+		@param	category	(string) the category for this site
+		@param	url			(string) the submission URL for this site,
+							with {u} marking where the current page's URL should be inserted,
+							and {t} indicating the title insertion point
+		@return this singleton */
 	addSite: function(id, display, icon, lang, category, url) {
 		this._sites[id] = {display: display, icon: icon, lang: lang, category: category, url: url};
 		return this;
 	},
 
 	/* Return the list of defined sites.
-	   @return  (object[]) indexed by site id (string), each object contains
-	            display (string) the display name,
-	            icon    (string) the location of the icon, or
-	                    (number) the icon's index in the combined image
-	            lang    (string) the language code for this site
-	            url     (string) the submission URL for the site */
+		@return	(object[]) indexed by site id (string), each object contains
+				display	(string) the display name,
+				icon	(string) the location of the icon, or
+						(number) the icon's index in the combined image
+				lang	(string) the language code for this site
+				url		(string) the submission URL for the site */
 	getSites: function() {
 		return this._sites;
 	},
 
 	/* Attach the bookmarking widget to a div.
-	   @param  target    (element) the bookmark container
-	   @param  settings  (object) the settings for this container */
+		@param	target		(element) the bookmark container
+		@param	settings	(object) the settings for this container */
 	_attachBookmark: function(target, settings) {
 		target = $(target);
 		if (target.hasClass(this.markerClassName)) {
@@ -172,16 +172,16 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Reconfigure the settings for a bookmarking div.
-	   @param  target    (element) the bookmark container
-	   @param  settings  (object) the new settings for this container or
-	                     (string) a single setting name
-	   @param  value     (any) the single setting's value */
+		@param	target		(element) the bookmark container
+		@param	settings	(object) the new settings for this container or
+							(string) a single setting name
+		@param	value		(any) the single setting's value */
 	_changeBookmark: function(target, settings, value) {
 		target = $(target);
 		if (!target.hasClass(this.markerClassName)) {
 			return;
 		}
-		if (typeof settings == 'string') {
+		if (typeof settings === 'string') {
 			var name = settings;
 			settings = {};
 			settings[name] = value;
@@ -190,14 +190,14 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Construct the requested bookmarking links.
-	   @param  target    (element) the bookmark container
-	   @param  settings  (object) the settings for this container */
+		@param	target	(element) the bookmark container
+		@param	settings	(object) the settings for this container */
 	_updateBookmark: function(target, settings) {
 		var oldSettings = $.data(target[0], PROP_NAME) || $.extend({}, this._defaults);
 		settings = extendRemove(oldSettings, settings || {});
 		$.data(target[0], PROP_NAME, settings);
 		var sites = settings.sites;
-		if (sites.length == 0) { // All sites
+		if (sites.length === 0) { // All sites
 			$.each($.bookmark._sites, function(id) {
 				sites.push(id);
 			});
@@ -208,7 +208,7 @@ $.extend(Bookmark.prototype, {
 				var lang = value.match(/lang:(.*)/); // Select by language
 				if (lang) {
 					$.each($.bookmark._sites, function(id, site) {
-						if (site.lang == lang[1] && $.inArray(id, sites) == -1) {
+						if (site.lang === lang[1] && $.inArray(id, sites) === -1) {
 							sites.push(id);
 						}
 					});
@@ -216,7 +216,7 @@ $.extend(Bookmark.prototype, {
 				var category = value.match(/category:(.*)/); // Select by category
 				if (category) {
 					$.each($.bookmark._sites, function(id, site) {
-						if (site.category == category[1] && $.inArray(id, sites) == -1) {
+						if (site.category === category[1] && $.inArray(id, sites) === -1) {
 							sites.push(id);
 						}
 					});
@@ -271,10 +271,10 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Add all the selected sites to the list.
-	   @param  sites     (string[]) the IDs of the selected sites
-	   @param  details   (object) details about this page
-	   @param  settings  (object) the bookmark settings
-	   @param  list      (jQuery) the list to add to */
+		@param	sites		(string[]) the IDs of the selected sites
+		@param	details		(object) details about this page
+		@param	settings	(object) the bookmark settings
+		@param	list		(jQuery) the list to add to */
 	_addSelectedSites: function(sites, details, settings, list) {
 		$.each(sites, function(index, id) {
 			var site = $.bookmark._sites[id];
@@ -302,21 +302,21 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Add a single site to the list.
-	   @param  settings  (object) the bookmark settings
-	   @param  list      (jQuery) the list to add to
-	   @param  display   (string) the display name for this site
-	   @param  icon      (string) the location (URL) of an icon for this site (16x16), or
-	                     (number) the index of the icon within the combined image
-	   @param  url       (string) the URl for this site
-	   @param  onclick   (function, optional) additional processing for this link
-	   @param  hint      (string, optional) the hint text to use for this link */
+		@param	settings	(object) the bookmark settings
+		@param	list		(jQuery) the list to add to
+		@param	display		(string) the display name for this site
+		@param	icon		(string) the location (URL) of an icon for this site (16x16), or
+							(number) the index of the icon within the combined image
+		@param	url			(string) the URl for this site
+		@param	onclick		(function, optional) additional processing for this link
+		@param	hint		(string, optional) the hint text to use for this link */
 	_addOneSite: function(settings, list, display, icon, url, onclick, hint) {
 		var hintFormat = settings.hint || '{s}';
 		var html = '<li><a href="' + url + '"' +
 			(settings.target ? ' target="' + settings.target + '"' : '') + '>';
-		if (icon != null) {
+		if (icon !== null) {
 			var title = hint || hintFormat.replace(/\{s\}/, display);
-			if (typeof icon == 'number') {
+			if (typeof icon === 'number') {
 				html += '<span title="' + title + '" ' +
 					(settings.iconsStyle ? 'class="' + settings.iconsStyle + '" ' : '') +
 					'style="' + (settings.iconsStyle ? 'background-position: ' :
@@ -346,7 +346,7 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Remove the bookmarking widget from a div.
-	   @param  target  (element) the bookmark container */
+		@param	target	(element) the bookmark container */
 	_destroyBookmark: function(target) {
 		target = $(target);
 		if (!target.hasClass(this.markerClassName)) {
@@ -357,8 +357,8 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Callback when selected.
-	   @param  target  (element) the target div
-	   @param  siteID  (string) the selected site ID */
+		@param	target	(element) the target div
+		@param	siteID	(string) the selected site ID */
 	_selected: function(target, siteID) {
 		var settings = $.data(target, PROP_NAME);
 		var site = $.bookmark._sites[siteID];
@@ -369,8 +369,8 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Add the current page as a favourite in the browser.
-	   @param  url    (string) the URL to bookmark
-	   @param  title  (string) the title to bookmark */
+		@param	url	(string) the URL to bookmark
+		@param	title	(string) the title to bookmark */
 	_addFavourite: function(url, title) {
 		if ($.browser.msie) {
 			window.external.addFavorite(url, title);
@@ -381,8 +381,8 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Show all sites in a popup list.
-	   @param  elem      (element) the clicked 'Show all' link
-	   @param  settings  (object) the bookmark settings */
+		@param	elem		(element) the clicked 'Show all' link
+		@param	settings	(object) the bookmark settings */
 	_showAll: function(elem, settings) {
 		var sites = [];
 		$.each($.bookmark._sites, function(id) {
@@ -399,7 +399,7 @@ $.extend(Bookmark.prototype, {
 			append(list).appendTo('body');
 		all.css({left: ($(window).width() - all.width()) / 2, top: ($(window).height() - all.height()) / 2}).show();
 		$(document).bind('click.bookmark', function(event) {
-			if ($(event.target).closest(elem).length == 0 && $(event.target).closest('#bookmark_all').length == 0) {
+			if ($(event.target).closest(elem).length === 0 && $(event.target).closest('#bookmark_all').length === 0) {
 				$('#bookmark_all').remove();
 				$(document).unbind('click.bookmark');
 			}
@@ -407,8 +407,8 @@ $.extend(Bookmark.prototype, {
 	},
 
 	/* Retrieve details about the current site.
-	   @param  settings  (object) the bookmark settings
-	   @return  (object) the site details */
+		@param	settings	(object) the bookmark settings
+		@return	(object) the site details */
 	_getSiteDetails: function(settings) {
 		var url = settings.url || window.location.href;
 		var title = settings.title || document.title || $('h1:first').text();
@@ -425,7 +425,7 @@ $.extend(Bookmark.prototype, {
 function extendRemove(target, props) {
 	$.extend(target, props);
 	for (var name in props) {
-		if (props[name] == null) {
+		if (props[name] === null) {
 			target[name] = null;
 		}
 	}
@@ -433,13 +433,13 @@ function extendRemove(target, props) {
 }
 
 /* Attach the bookmarking functionality to a jQuery selection.
-   @param  command  (string) the command to run (optional, default 'attach')
-   @param  options  (object) the new settings to use for these bookmarking instances
-   @return  (jQuery object) for chaining further calls */
+	@param	command	(string) the command to run (optional, default 'attach')
+	@param	options	(object) the new settings to use for these bookmarking instances
+	@return	(jQuery object) for chaining further calls */
 $.fn.bookmark = function(options) {
 	var otherArgs = Array.prototype.slice.call(arguments, 1);
 	return this.each(function() {
-		if (typeof options == 'string') {
+		if (typeof options === 'string') {
 			if (!$.bookmark['_' + options + 'Bookmark']) {
 				throw 'Unknown operation: ' + options;
 			}
