@@ -4,7 +4,7 @@
 	Dual licensed under the GPL (http://dev.jquery.com/browser/trunk/jquery/GPL-LICENSE.txt) and 
 	MIT (http://dev.jquery.com/browser/trunk/jquery/MIT-LICENSE.txt) licenses. 
 	Please attribute the author if you use it. */
-
+/*jshint devel:true, forin:false */
 /* Allow your page to be shared with various bookmarking sites.
 	Attach the functionality with options like:
 	$('div selector').bookmark({sites: ['delicious', 'digg']});
