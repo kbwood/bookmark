@@ -64,6 +64,8 @@ html:first-child .bookmark_list {  /* Opera */
 }
 .bookmark_list img {
 	border: none;
+	vertical-align: text-top;
+	*vertical-align: middle; /* IE7 and below */
 }
 #bookmark_all {
 	display: none;
